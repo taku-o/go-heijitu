@@ -27,6 +27,7 @@
 1. The go-heijitu ライブラリ shall provide a `MonthDay` type with a `Month` field (type `time.Month`) and a `Day` field (type `int`) as public fields.
 2. When `Matches(t time.Time)` is called on a `MonthDay` value and the month and day of `t` match, the go-heijitu ライブラリ shall return `true`, regardless of the year.
 3. When `Matches(t time.Time)` is called on a `MonthDay` value and either the month or the day of `t` does not match, the go-heijitu ライブラリ shall return `false`.
+4. The go-heijitu ライブラリ shall perform no validation on the `Month` and `Day` fields of `MonthDay`; `Matches` shall perform only a direct equality comparison. A `MonthDay` specifying a date that does not exist in non-leap years (e.g., February 29) shall return `false` for all dates on which that month-day combination does not occur.
 
 ---
 
@@ -49,9 +50,10 @@
 1. The go-heijitu ライブラリ shall provide a `HolidayProvider` interface with the following three methods: `IsHoliday`, `HolidayName`, and `HolidaysBetween`.
 2. When `IsHoliday` is called for a date recognized as a holiday, the go-heijitu ライブラリ shall return `true` and `nil` error.
 3. When `IsHoliday` is called for a date not recognized as a holiday, the go-heijitu ライブラリ shall return `false` and `nil` error.
-4. When `HolidayName` is called for a date not recognized as a holiday, the go-heijitu ライブラリ shall return an empty string and `nil` error.
-5. When `HolidaysBetween` is called with a `from` date and a `to` date, the go-heijitu ライブラリ shall include holidays that fall on the `from` date and the `to` date themselves (both endpoints inclusive).
-6. If a `HolidayProvider` method encounters an error, the go-heijitu ライブラリ shall return that error to the caller without suppressing it.
+4. When `HolidayName` is called for a date recognized as a holiday, the go-heijitu ライブラリ shall return the holiday name as a non-empty string and `nil` error.
+5. When `HolidayName` is called for a date not recognized as a holiday, the go-heijitu ライブラリ shall return an empty string and `nil` error.
+6. When `HolidaysBetween` is called with a `from` date and a `to` date, the go-heijitu ライブラリ shall include holidays that fall on the `from` date and the `to` date themselves (both endpoints inclusive).
+7. If a `HolidayProvider` method encounters an error, the go-heijitu ライブラリ shall return that error to the caller without suppressing it.
 
 ---
 

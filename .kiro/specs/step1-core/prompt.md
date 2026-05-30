@@ -52,6 +52,27 @@ Suggestion: File Structure Plan に package heijitu の記載を追加する。
 
 jj new
 
+-------------
+
+/kiro-spec-tasks step1-core
+
+/kiro-approve-task step1-core
+
+/kiro-review-spec step1-core
+
+見つかった問題、簡単に直せるものは直して。
+
+仕様周り。
+
+2月29日など境界値の扱い、は適当に仕様を決めて。
+
+これも対応。適当に仕様を決める。
+> HolidayName が祝日の場合の返り値が未記載。
+
+jj new
+
+-------------
+
 
 
 

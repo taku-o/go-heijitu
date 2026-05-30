@@ -161,13 +161,15 @@ flowchart TD
 | 1.1 | MonthDay 型のフィールド | MonthDay | — | — |
 | 1.2 | Matches() が true を返す | MonthDay | `Matches()` | — |
 | 1.3 | Matches() が false を返す | MonthDay | `Matches()` | — |
+| 1.4 | バリデーションなし・直接比較のみ（2/29 は閏年のみ true） | MonthDay | `Matches()` | — |
 | 2.1 | Holiday 型のフィールド | Holiday | — | — |
 | 3.1 | HolidayProvider インターフェース定義 | HolidayProvider | `IsHoliday` / `HolidayName` / `HolidaysBetween` | — |
 | 3.2 | IsHoliday が true を返す | HolidayProvider | `IsHoliday` | — |
 | 3.3 | IsHoliday が false を返す | HolidayProvider | `IsHoliday` | — |
-| 3.4 | HolidayName が空文字を返す | HolidayProvider | `HolidayName` | — |
-| 3.5 | HolidaysBetween が両端を含む | HolidayProvider | `HolidaysBetween` | — |
-| 3.6 | エラー伝播 | HolidayProvider | 全メソッド | — |
+| 3.4 | HolidayName が祝日名を返す | HolidayProvider | `HolidayName` | — |
+| 3.5 | HolidayName が空文字を返す（非祝日） | HolidayProvider | `HolidayName` | — |
+| 3.6 | HolidaysBetween が両端を含む | HolidayProvider | `HolidaysBetween` | — |
+| 3.7 | エラー伝播 | HolidayProvider | 全メソッド | — |
 | 4.1 | New() コンストラクタ | BusinessCalendar | `New()` | — |
 | 4.2 | WithExcludedDates | Option | `WithExcludedDates()` | — |
 | 4.3 | WithConfig | Option / config | `WithConfig()` | — |
@@ -195,10 +197,11 @@ flowchart TD
 |--------------|---------|------|--------------|--------------|
 | MonthDay | monthday.go | 月日値オブジェクト + 一致判定 | 1.1, 1.2, 1.3 | — |
 | Holiday | holiday.go | 祝日値オブジェクト | 2.1 | — |
-| HolidayProvider | provider.go | 祝日判定インターフェース | 3.1–3.6 | Holiday (P0) |
+| HolidayProvider | provider.go | 祝日判定インターフェース | 3.1, 3.6（3.2–3.5 はモック経由でテスト実証） | Holiday (P0) |
 | BusinessCalendar | calendar.go | 営業日判定ロジック | 4.1, 4.4, 5.1–5.6 | HolidayProvider (P0), MonthDay (P0) |
 | Option functions | option.go | カレンダー構築オプション | 4.2, 4.3, 4.5 | config (P0), MonthDay (P0) |
 | config | config.go | 設定ファイル読み込み | 6.1–6.5 | gopkg.in/yaml.v3 (P1) |
+| isExcluded（非公開） | calendar.go | 除外日付チェックの共通ヘルパー | 5.3, 5.4 | MonthDay (P0) |
 
 ---
 
@@ -225,8 +228,10 @@ type MonthDay struct {
 func (md MonthDay) Matches(t time.Time) bool
 ```
 
-- 事前条件: なし
+- 事前条件: なし（フィールド値のバリデーションは行わない）
 - 事後条件: `t.Month() == md.Month && t.Day() == md.Day` のとき `true` を返す
+- `MonthDay{Month: time.February, Day: 29}` は閏年の 2/29 のみ `true`。平年では `t.Day()` が 29 にならないため自然に `false` となる
+- 月が 13 以上・日が 32 以上など存在しない値を設定した場合、いかなる `time.Time` にも一致しないため常に `false` を返す
 
 ---
 
@@ -264,7 +269,7 @@ type HolidayProvider interface {
     // IsHoliday は t が祝日であれば true を返す
     IsHoliday(ctx context.Context, t time.Time) (bool, error)
 
-    // HolidayName は t の祝日名を返す。祝日でなければ空文字を返す
+    // HolidayName は t の祝日名を返す。祝日であれば非空文字列、祝日でなければ空文字を返す
     HolidayName(ctx context.Context, t time.Time) (string, error)
 
     // HolidaysBetween は from から to の間（両端を含む）の祝日リストを返す
