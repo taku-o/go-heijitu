@@ -71,6 +71,11 @@ jj new
 
 jj new
 
+jj bookmark set feature/step1-core-implementation -r @-
+
+git switch feature/step1-core-implementation
+pull request作成
+
 -------------
 
 
