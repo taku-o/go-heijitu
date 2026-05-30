@@ -78,6 +78,11 @@ pull request作成
 
 -------------
 
+https://github.com/taku-o/go-heijitu/pull/2
+/review 2
+
+
+
 
 
 
