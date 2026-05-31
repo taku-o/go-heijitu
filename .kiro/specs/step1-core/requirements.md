@@ -54,6 +54,7 @@
 5. When `HolidayName` is called for a date not recognized as a holiday, the go-heijitu ライブラリ shall return an empty string and `nil` error.
 6. When `HolidaysBetween` is called with a `from` date and a `to` date, the go-heijitu ライブラリ shall include holidays that fall on the `from` date and the `to` date themselves (both endpoints inclusive).
 7. If a `HolidayProvider` method encounters an error, the go-heijitu ライブラリ shall return that error to the caller without suppressing it.
+8. When `HolidaysBetween` is called with a `from` date that is after the `to` date, the go-heijitu ライブラリ shall return an empty slice and `nil` error.
 
 ---
 
@@ -65,7 +66,7 @@
 
 1. The go-heijitu ライブラリ shall provide a `New(provider HolidayProvider, opts ...Option) *BusinessCalendar` constructor that accepts a `HolidayProvider` and zero or more `Option` values.
 2. When `WithExcludedDates(dates []MonthDay)` is passed as an option to `New()`, the go-heijitu ライブラリ shall register those dates as fixed excluded dates applied to all subsequent `IsBusinessDay` calls on that calendar.
-3. When `WithConfig(configPath string)` is passed as an option to `New()`, the go-heijitu ライブラリ shall read the specified config file and register the excluded dates defined in it.
+3. When the `Option` returned by `WithConfig(configPath string)` is passed to `New()`, the go-heijitu ライブラリ shall read the specified config file and register the excluded dates defined in it. Note: `WithConfig` returns `(Option, error)` and must be called separately before `New()` to handle any file-read error.
 4. When both `WithExcludedDates` and `WithConfig` are used together, the go-heijitu ライブラリ shall merge both sets of excluded dates so that all specified dates are treated as excluded.
 5. If the file specified in `WithConfig` does not exist or cannot be read, `WithConfig` shall return an error to the caller.
 

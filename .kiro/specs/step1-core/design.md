@@ -94,7 +94,7 @@ HolidayProvider（インターフェース）  config（内部設定型）
              BusinessCalendar（calendar.go）
 ```
 
-- `calendar.go` は `HolidayProvider` と `MonthDay`（`extraHolidays` 保持）に依存する
+- `calendar.go` は `HolidayProvider` と `MonthDay`（`excludedDates` 保持）に依存する
 - `config` は `MonthDay` にのみ依存し、`HolidayProvider` には依存しない
 - 上位レイヤーは下位レイヤーのみを import する。逆方向の import は禁止する
 
@@ -145,9 +145,9 @@ flowchart TD
     Weekend -- No --> HolidayCall[provider.IsHoliday 呼び出し]
     HolidayCall -- エラー --> Err([error を返す])
     HolidayCall -- 祝日 --> F2([false を返す])
-    HolidayCall -- 祝日でない --> ExtraHolidays{extraHolidays に\n一致する月日があるか?}
-    ExtraHolidays -- Yes --> F3([false を返す])
-    ExtraHolidays -- No --> ExtraExcluded{extraExcluded に\n一致する月日があるか?}
+    HolidayCall -- 祝日でない --> ExcludedDates{excludedDates に\n一致する月日があるか?}
+    ExcludedDates -- Yes --> F3([false を返す])
+    ExcludedDates -- No --> ExtraExcluded{extraExcluded に\n一致する月日があるか?}
     ExtraExcluded -- Yes --> F4([false を返す])
     ExtraExcluded -- No --> T([true を返す])
 ```
@@ -170,6 +170,7 @@ flowchart TD
 | 3.5 | HolidayName が空文字を返す（非祝日） | HolidayProvider | `HolidayName` | — |
 | 3.6 | HolidaysBetween が両端を含む | HolidayProvider | `HolidaysBetween` | — |
 | 3.7 | エラー伝播 | HolidayProvider | 全メソッド | — |
+| 3.8 | HolidaysBetween で from > to の場合は空スライス返却 | HolidayProvider | `HolidaysBetween` | — |
 | 4.1 | New() コンストラクタ | BusinessCalendar | `New()` | — |
 | 4.2 | WithExcludedDates | Option | `WithExcludedDates()` | — |
 | 4.3 | WithConfig | Option / config | `WithConfig()` | — |
@@ -195,9 +196,9 @@ flowchart TD
 
 | コンポーネント | ファイル | 責務 | 要件カバレッジ | 依存（P0/P1） |
 |--------------|---------|------|--------------|--------------|
-| MonthDay | monthday.go | 月日値オブジェクト + 一致判定 | 1.1, 1.2, 1.3 | — |
+| MonthDay | monthday.go | 月日値オブジェクト + 一致判定 | 1.1, 1.2, 1.3, 1.4 | — |
 | Holiday | holiday.go | 祝日値オブジェクト | 2.1 | — |
-| HolidayProvider | provider.go | 祝日判定インターフェース | 3.1, 3.6（3.2–3.5 はモック経由でテスト実証） | Holiday (P0) |
+| HolidayProvider | provider.go | 祝日判定インターフェース | 3.1, 3.6, 3.7, 3.8（3.2–3.5 はモック経由でテスト実証） | Holiday (P0) |
 | BusinessCalendar | calendar.go | 営業日判定ロジック | 4.1, 4.4, 5.1–5.6 | HolidayProvider (P0), MonthDay (P0) |
 | Option functions | option.go | カレンダー構築オプション | 4.2, 4.3, 4.5 | config (P0), MonthDay (P0) |
 | config | config.go | 設定ファイル読み込み | 6.1–6.5 | gopkg.in/yaml.v3 (P1) |
@@ -272,7 +273,7 @@ type HolidayProvider interface {
     // HolidayName は t の祝日名を返す。祝日であれば非空文字列、祝日でなければ空文字を返す
     HolidayName(ctx context.Context, t time.Time) (string, error)
 
-    // HolidaysBetween は from から to の間（両端を含む）の祝日リストを返す
+    // HolidaysBetween は from から to の間（両端を含む）の祝日リストを返す。from > to の場合は空スライスと nil error を返す
     HolidaysBetween(ctx context.Context, from, to time.Time) ([]Holiday, error)
 }
 ```
@@ -297,7 +298,7 @@ type HolidayProvider interface {
 ```go
 type BusinessCalendar struct {
     provider      HolidayProvider
-    extraHolidays []MonthDay // WithExcludedDates / WithConfig で設定した除外日付
+    excludedDates []MonthDay // WithExcludedDates / WithConfig で設定した除外日付
 }
 
 // New は BusinessCalendar を構築する
@@ -316,7 +317,7 @@ func (bc *BusinessCalendar) IsBusinessDay(
 
 1. 土曜・日曜 → `false`
 2. `provider.IsHoliday(ctx, t)` が `true` → `false`（エラーは即伝播）
-3. `bc.extraHolidays` に一致する月日あり → `false`
+3. `bc.excludedDates` に一致する月日あり → `false`
 4. `extraExcluded` に一致する月日あり → `false`
 5. 上記いずれにも該当しない → `true`
 
@@ -350,7 +351,7 @@ func WithExcludedDates(dates []MonthDay) Option
 func WithConfig(configPath string) (Option, error)
 ```
 
-- `WithExcludedDates` と `WithConfig` は併用可能。`New()` に渡された順に `extraHolidays` へ追記する（マージ）
+- `WithExcludedDates` と `WithConfig` は併用可能。`New()` に渡された順に `excludedDates` へ追記する（マージ）
 - `WithConfig` はファイル読み込みを `New()` 呼び出し前に行い、エラーを即返す（Requirement 4.5）
 
 ---
@@ -377,7 +378,7 @@ type config struct {
 func loadConfig(path string) (*config, error)
 ```
 
-- `path.Ext()` で拡張子を判別する
+- `filepath.Ext()` で拡張子を判別する
 - YAML: `gopkg.in/yaml.v3` の `yaml.NewDecoder` を使用
 - JSON: `encoding/json` の `json.NewDecoder` を使用
 - ファイルが存在しない・読み取れない・パース失敗のいずれもエラーを返す（握りつぶさない）
@@ -410,13 +411,13 @@ classDiagram
 
     class BusinessCalendar {
         -provider HolidayProvider
-        -extraHolidays MonthDay[]
+        -excludedDates MonthDay[]
         +New(provider, opts) BusinessCalendar
         +IsBusinessDay(ctx, t, extraExcluded) bool, error
     }
 
     BusinessCalendar --> HolidayProvider : uses
-    BusinessCalendar --> MonthDay : holds extraHolidays
+    BusinessCalendar --> MonthDay : holds excludedDates
     HolidayProvider --> Holiday : returns
 ```
 

@@ -73,6 +73,5 @@ node_modules/
 .claude/commands/kiro-review-spec.md
 .claude/commands/serena-initialize.md
 .claude/commands/simplify-loop.md
-.claude/skills/jj-new/
 CLAUDE.local.md
 
