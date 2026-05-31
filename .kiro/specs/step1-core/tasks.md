@@ -22,9 +22,9 @@
   - _Requirements: 2.1_
   - _Boundary: Holiday_
 
-- [ ] 3. HolidayProvider インターフェースと設定読み込みの実装
+- [x] 3. HolidayProvider インターフェースと設定読み込みの実装
 
-- [ ] 3.1 (P) HolidayProvider インターフェースの定義
+- [x] 3.1 (P) HolidayProvider インターフェースの定義
   - `IsHoliday(ctx, t) (bool, error)`、`HolidayName(ctx, t) (string, error)`、`HolidaysBetween(ctx, from, to) ([]Holiday, error)` の 3 メソッドを持つインターフェースを定義する
   - エラーは即座に呼び出し元へ伝播することをインターフェース契約に明示する（コメントで記載）
   - `provider.go` ファイルが作成され `go build ./...` がエラーなく通ること
@@ -32,7 +32,7 @@
   - _Boundary: HolidayProvider_
   - _Depends: 2.2_
 
-- [ ] 3.2 (P) 設定ファイル読み込み機能の実装
+- [x] 3.2 (P) 設定ファイル読み込み機能の実装
   - `excluded_dates`（`[]MonthDay`）フィールドを持つ非公開 `config` 型を YAML/JSON タグ付きで定義する
   - `loadConfig(path string) (*config, error)` を実装し、拡張子（`.yaml` / `.yml` → YAML、`.json` → JSON）でパース形式を自動判別する
   - 不明な拡張子の場合はサポート外フォーマットエラーを返す

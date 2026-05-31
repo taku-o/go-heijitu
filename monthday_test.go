@@ -94,7 +94,7 @@ func TestMonthDay_Matches(t *testing.T) {
 			if got != tt.want {
 				t.Errorf(
 					"MonthDay{Month: %v, Day: %d}.Matches(%v) = %v, want %v",
-					tt.md.Month, tt.md.Day, tt.t.Format("2006-01-02"), got, tt.want,
+					tt.md.Month, tt.md.Day, tt.t.Format(dateLayout), got, tt.want,
 				)
 			}
 		})
