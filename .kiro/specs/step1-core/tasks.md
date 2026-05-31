@@ -7,16 +7,16 @@
   - `go get gopkg.in/yaml.v3` で YAML ライブラリを追加し `go.sum` を生成する
   - `go build ./...` がエラーなく通ること
 
-- [ ] 2. コアデータ型の実装
+- [x] 2. コアデータ型の実装
 
-- [ ] 2.1 (P) MonthDay 型と月日一致判定の実装
+- [x] 2.1 (P) MonthDay 型と月日一致判定の実装
   - `Month`（`time.Month`）と `Day`（`int`）の 2 つの公開フィールドを持つ構造体を定義する
   - 月と日が一致したら `true`、どちらか異なれば `false` を返す `Matches(t time.Time) bool` メソッドを実装する（年は無視する）
   - `monthday.go` ファイルが作成され `go build ./...` がエラーなく通ること
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
   - _Boundary: MonthDay_
 
-- [ ] 2.2 (P) Holiday 型の実装
+- [x] 2.2 (P) Holiday 型の実装
   - `Date`（`time.Time`）と `Name`（`string`）の 2 つの公開フィールドを持つ構造体を定義する
   - `holiday.go` ファイルが作成され `go build ./...` がエラーなく通ること
   - _Requirements: 2.1_
