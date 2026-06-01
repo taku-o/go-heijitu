@@ -71,6 +71,7 @@ node_modules/
 .claude/commands/kiro-complete-tasks.md
 .claude/commands/kiro-review-impl.md
 .claude/commands/kiro-review-spec.md
+.claude/commands/kiro-review-feature.md
 .claude/commands/serena-initialize.md
 .claude/commands/simplify-loop.md
 CLAUDE.local.md
