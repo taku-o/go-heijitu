@@ -200,4 +200,12 @@ jj new
 
 -------------
 
+takt --task "/kiro-impl step1-core 5
+必要ならテストを修正して良い。"
+
+/kiro-review-feature step1-core 5
+jj new
+
+-------------
+
 

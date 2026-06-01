@@ -68,9 +68,9 @@
   - `go build ./...` がエラーなく通ること
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6_
 
-- [ ] 5. テストの実装
+- [x] 5. テストの実装
 
-- [ ] 5.1 (P) MonthDay.Matches() テスト
+- [x] 5.1 (P) MonthDay.Matches() テスト
   - 月と日が一致する場合（異なる年でも）`true` を返すことを確認するテストを書く
   - 月または日が異なる場合に `false` を返すことを確認するテストを書く
   - 2月29日を指定した MonthDay が閏年では `true`、平年では `false` を返すことを確認するテストを書く
@@ -79,7 +79,7 @@
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
   - _Boundary: MonthDay_
 
-- [ ] 5.2 (P) loadConfig() テスト
+- [x] 5.2 (P) loadConfig() テスト
   - YAML ファイルから `excluded_dates` を正しく読み込めることを確認するテストを書く
   - JSON ファイルから `excluded_dates` を正しく読み込めることを確認するテストを書く
   - サポート外拡張子でエラーを返すことを確認するテストを書く
@@ -88,7 +88,7 @@
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
   - _Boundary: config_
 
-- [ ] 5.3 IsBusinessDay テスト（モックプロバイダー使用）
+- [x] 5.3 IsBusinessDay テスト（モックプロバイダー使用）
   - `calendar_test.go` 内にテスト専用 `mockProvider` をローカル定義する（`HolidayProvider` インターフェースを満たすシンプルな実装）
   - `HolidayName` が非祝日に対して空文字を返すこと、`HolidaysBetween` が両端の日付を含む範囲を返すこと、`HolidaysBetween` で `from > to` の場合に空スライスと nil error を返すことを `mockProvider` の実装で保証する
   - 土曜・日曜に `false` を返すことを確認するテストを書く

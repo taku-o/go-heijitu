@@ -34,7 +34,6 @@ func (p *testProvider) HolidayName(ctx context.Context, t time.Time) (string, er
 	if p.err != nil {
 		return "", p.err
 	}
-	// 祝日でなければ空文字を返す（Requirement 3.5）
 	name := p.holidays[t.Format(dateLayout)]
 	return name, nil
 }
@@ -43,7 +42,6 @@ func (p *testProvider) HolidaysBetween(ctx context.Context, from, to time.Time) 
 	if p.err != nil {
 		return nil, p.err
 	}
-	// from > to の場合は空スライスと nil error を返す（Requirement 3.8）
 	if from.After(to) {
 		return []heijitu.Holiday{}, nil
 	}
