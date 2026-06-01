@@ -1,4 +1,4 @@
-# ギャップ分析: Step 2 — holidayjp プロバイダー + 残りAPI実装
+# 調査・分析ログ: Step 2 — holidayjp プロバイダー + 残りAPI実装
 
 ## 1. 現状調査
 
@@ -134,3 +134,25 @@ setup_test.go     — YAML ライブラリのスモークテスト
 2. **`HolidaysBetween` の型変換**: `holiday.Holidays` → `[]heijitu.Holiday` の変換ロジック（日付ゼロ値の扱い含む）
 3. **`providers/holidayjp/` のパッケージ命名**: `package holidayjp` とするか `package holiday` とするかを決定する
 4. **テストデータの選択**: 特定の祝日日付（元旦、成人の日 等）をハードコードするか、現在年度から動的に計算するかを決定する
+
+---
+
+## 7. 設計シンセシス（design-synthesis 適用結果）
+
+### 一般化
+- `NextBusinessDay` / `FirstBusinessDayOfMonth` / `FirstBusinessDaysOfYear` の3つは「最初の営業日を探す」という共通のループパターン。`IsBusinessDay()` を唯一の判定述語として再利用することで、土日・祝日・除外日付のロジックを重複させない。
+
+### Build vs. Adopt
+- **holiday_jp-go を採用**: 埋め込みデータ・I/O なし・MIT ライセンス・既存 Go エコシステムで定評あり。カスタム実装は不要。
+- **薄いアダプターを構築**: `Provider` 型は状態を持たず、関数のブリッジのみを担う。
+
+### 単純化
+- `Holidays()` は `provider.HolidaysBetween()` への1行委譲で実現。中間抽象層不要。
+- `FirstBusinessDaysOfYear` は `FirstBusinessDayOfMonth` の12回ループのみ。独立したロジックは持たない。
+- `holidayjp.Provider` はフィールドを持たないゼロ値型（`type Provider struct{}`）。コンストラクタは `New()` 関数のみ。
+
+### 設計フェーズで確定した事項
+1. `HolidayName` の非祝日エラーは `("", nil)` に変換（I/O なしライブラリのため安全）
+2. `HolidaysBetween` の型変換: `map[string]string` → `[]heijitu.Holiday`（日付パースに `from.Location()` を使用、日付昇順ソート）
+3. パッケージ名: `package holidayjp`
+4. テストデータ: 既知の固定日付をハードコード（元旦 2025-01-01 など）

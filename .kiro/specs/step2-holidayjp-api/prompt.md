@@ -34,7 +34,18 @@ jj new
 
 /kiro-spec-design step2-holidayjp-api
 /kiro-validate-design step2-holidayjp-api
+
+Critical IssueはSuggestionを採用。
+  🔴 Critical Issue 1: FirstBusinessDayOfMonth の初期 time.Time 構築のタイムゾーンが未指定
+  Suggestion: Design.md の FirstBusinessDayOfMonth Implementation Notes に「候補日は time.Date(year,
+  month, day, 0, 0, 0, 0, time.Local) で構築する」と明示する。（既存の IsBusinessDay テストは time.UTC
+  使用だが、月初日を構築する際は time.Local が実用上の慣例に合う。どちらかを明示すればよい。）
+
+  🔴 Critical Issue 2: HolidaysBetween 戻り値のソート順検証がテスト戦略に欠如
+  Suggestion: テスト戦略 Unit Tests 5番に「かつ日付昇順で並んでいること」の条件を追記する。
+
 /kiro-approve-design step2-holidayjp-api
+jj new
 
 -------------
 
