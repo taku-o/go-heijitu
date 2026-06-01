@@ -1,13 +1,13 @@
 # Implementation Plan
 
-- [ ] 1. Foundation — holiday_jp-go の依存追加
+- [x] 1. Foundation — holiday_jp-go の依存追加
   - `go get github.com/holiday-jp/holiday_jp-go` を実行し `go.mod` と `go.sum` を更新する
   - `go build ./...` がエラーなく通ること
   - _Requirements: 1.7_
 
-- [ ] 2 (P). holidayjp プロバイダーの実装とテスト
+- [x] 2 (P). holidayjp プロバイダーの実装とテスト
 
-- [ ] 2.1 IsHoliday / HolidayName / HolidaysBetween の実装
+- [x] 2.1 IsHoliday / HolidayName / HolidaysBetween の実装
   - `providers/holidayjp/` ディレクトリを作成し `provider.go` を新規作成する（`package holidayjp`）
   - `IsHoliday`: `holiday.IsHoliday(t)` の戻り値を `(bool, nil)` として返す
   - `HolidayName`: `holiday.HolidayName(t)` がエラーを返した場合は `("", nil)` に変換して返す（非祝日の意味のみのエラーであり、I/O なしライブラリのため変換は安全）
@@ -16,7 +16,7 @@
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7_
   - _Boundary: holidayjp.Provider_
 
-- [ ] 2.2 holidayjp プロバイダーのテスト実装
+- [x] 2.2 holidayjp プロバイダーのテスト実装
   - `providers/holidayjp/provider_test.go` を新規作成する（`package holidayjp_test`）
   - IsHoliday: 既知の祝日日付（例: 2025-01-01 元日）で `true` を返すことを確認するテストを書く
   - IsHoliday: 祝日でない平日で `false` を返すことを確認するテストを書く

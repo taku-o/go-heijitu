@@ -68,6 +68,10 @@ graph TB
 | 祝日データ | `github.com/holiday-jp/holiday_jp-go` | 日本の国民祝日を埋め込みデータで提供 | ネットワーク不要・`go get` で追加 |
 | コア言語 | Go 1.23（既存） | ライブラリ実装 | 変更なし |
 
+### モジュール構成の決定
+
+`providers/holidayjp/` は root go.mod と同一モジュールに含める（sub-module 分割なし）。これにより `go get github.com/taku-o/go-heijitu` するだけで `holiday_jp-go` が全ライブラリ利用者の module graph に引き込まれる。利用者が独自 Provider を使用する場合でも `holiday_jp-go` の取得が発生することは既知のトレードオフとして受け入れる。将来 Step 3/4 の各プロバイダーも同一モジュールに追加されるため、root module は全オプションプロバイダーの依存を抱える構成になる。
+
 ## File Structure Plan
 
 ### Directory Structure

@@ -60,6 +60,29 @@ jj new
 jj new
 
 !jj-merge feature/step2-holidayjp-api
+/commit-commands:commit-push-pr
+
+/review 3
+
+-------------
+
+takt --task "/kiro-impl step2-holidayjp-api 1
+必要ならテストを修正して良い。"
+
+/kiro-review-feature step2-holidayjp-api 1
+jj new
+
+-------------
+
+takt --task "/kiro-impl step2-holidayjp-api 2
+必要ならテストを修正して良い。"
+
+/kiro-review-feature step2-holidayjp-api 2
+jj new
+
+-------------
+
+
 
 
 
