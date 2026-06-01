@@ -208,4 +208,20 @@ jj new
 
 -------------
 
+jj-merge feature/step1-core-implementation
+/commit-push-pr-update
+
+/review 2
+
+これ対応して
+  1. MonthDay に GoDoc が未記載（monthday.go:5）
+  // MonthDay は年をまたいで有効な月日を表す値オブジェクト。
+  type MonthDay struct {
+  1. パッケージの公開型には GoDoc があると Step 5 のドキュメント整備が容易になる。
+  2. Holiday フィールドに GoDoc が未記載（holiday.go:5-8）
+  Date フィールドが full
+  time.Time（日時＋タイムゾーン）である理由・想定時刻の説明があると後続の実装者が混乱しない
+
+
+
 
