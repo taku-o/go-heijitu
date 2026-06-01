@@ -51,6 +51,8 @@ jj new
 
 /kiro-spec-tasks step2-holidayjp-api
 /kiro-approve-task step2-holidayjp-api
+jj new
+
 /kiro-review-spec step2-holidayjp-api
 
 
