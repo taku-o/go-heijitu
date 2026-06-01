@@ -235,7 +235,7 @@ func (bc *BusinessCalendar) NextBusinessDay(ctx context.Context, from time.Time)
 **Responsibilities & Constraints**
 - ループの開始点は指定年月の1日
 - 検索範囲は指定月内のみ（候補日の月が指定月と異なった時点でループ終了）
-- 月内に営業日が見つからない場合の挙動は未定義（実運用では発生しない）
+- 月内に営業日が見つからない場合の動作は本仕様のスコープ外とし、結果を保証しない（実運用では発生しない）
 
 ##### Service Interface
 
@@ -248,6 +248,7 @@ func (bc *BusinessCalendar) FirstBusinessDayOfMonth(ctx context.Context, year in
 
 **Implementation Notes**
 - 候補日は `time.Date(year, month, day, 0, 0, 0, 0, time.Local)` で構築する
+- 候補日の月が指定月と異なった時点でループを終了する。この時点で営業日が見つかっていない場合の戻り値は本仕様のスコープ外（実装者は無限ループにならないよう月境界チェックを必ず実装すること）
 
 ---
 

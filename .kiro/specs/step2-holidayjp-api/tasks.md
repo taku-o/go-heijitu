@@ -25,12 +25,13 @@
   - HolidaysBetween: 祝日を含む期間で正しい件数が返り、両端の日付を含み、日付昇順で並んでいることを確認するテストを書く
   - HolidaysBetween: `from > to` のとき空スライスと `nil` error が返ることを確認するテストを書く
   - `go test ./providers/holidayjp/...` で全テストがパスすること
-  - _Requirements: 1.2, 1.3, 1.4, 1.5, 1.6_
+  - なお、`holiday_jp-go` の埋め込みデータが対応している年度範囲（通常、現在年度 ± 数年）を確認した上でテスト日付を選択すること
+  - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7_
   - _Boundary: holidayjp.Provider_
 
 - [ ] 3 (P). BusinessCalendar 残りAPI の実装
   - `NextBusinessDay(ctx, from)`: `from.AddDate(0,0,1)` を起点に `bc.IsBusinessDay(ctx, candidate)` を繰り返し、最初に `true` が返った日付を返す（エラーは即座に返す）
-  - `FirstBusinessDayOfMonth(ctx, year, month)`: `time.Date(year, month, 1, 0, 0, 0, 0, time.Local)` を起点に、候補日の月が指定月と異なるまで `bc.IsBusinessDay` を繰り返し、最初に `true` が返った日付を返す（エラーは即座に返す）
+  - `FirstBusinessDayOfMonth(ctx, year, month)`: `time.Date(year, month, 1, 0, 0, 0, 0, time.Local)` を起点に、候補日の月が指定月と異なるまで `bc.IsBusinessDay` を繰り返し、最初に `true` が返った日付を返す（エラーは即座に返す）。月境界チェックを必ず実装し、月をまたいで検索を続けないこと（月内に営業日がない場合の動作はスコープ外）
   - `FirstBusinessDaysOfYear(ctx, year)`: 1月から12月の順に `FirstBusinessDayOfMonth` を呼び出し 12 要素のスライスを返す（いずれかの月でエラーが発生したら即座にそのエラーを返す）
   - `Holidays(ctx, from, to)`: `bc.provider.HolidaysBetween(ctx, from, to)` に委譲して返す（会社独自の除外日付は含まない）
   - `go build ./...` がエラーなく通ること
@@ -50,6 +51,6 @@
   - Holidays: 指定期間（例: 2026-01-01〜2026-03-31）の祝日リストが正しい件数で返ることを確認する（holidayjp.New() 使用）
   - Holidays: プロバイダーがエラーを返したとき、そのエラーが呼び出し元に伝播することを確認する（モックプロバイダー使用）
   - `go test ./...` で新規テストおよび既存テスト（Step 1 実装分）全てがパスすること
-  - _Depends: 2, 3_
+  - _Depends: 2.2, 3_
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 3.1, 3.2, 3.3, 4.1, 4.2, 4.3, 5.1, 5.2, 5.3_
   - _Boundary: BusinessCalendar (calendar_test.go)_

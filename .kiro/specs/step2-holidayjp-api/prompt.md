@@ -55,6 +55,12 @@ jj new
 
 /kiro-review-spec step2-holidayjp-api
 
+軽微な問題、注意事項、対応推奨アクションにあげられている項目は修正してください。
+
+jj new
+
+!jj-merge feature/step2-holidayjp-api
+
 
 
 

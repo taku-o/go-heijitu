@@ -29,7 +29,7 @@ Step 3（caoCsv）・Step 4（googleCalendar）の各プロバイダー実装は
 3. When `IsHoliday` is called on the holidayjp provider for a date not recognized as a Japanese national holiday, the go-heijitu ライブラリ shall return `false` and `nil` error.
 4. When `HolidayName` is called on the holidayjp provider for a date recognized as a Japanese national holiday, the go-heijitu ライブラリ shall return the holiday name as a non-empty string and `nil` error.
 5. When `HolidayName` is called on the holidayjp provider for a date not recognized as a Japanese national holiday, the go-heijitu ライブラリ shall return an empty string and `nil` error.
-6. When `HolidaysBetween` is called on the holidayjp provider with a `from` date and a `to` date, the go-heijitu ライブラリ shall return all Japanese national holidays in that range with both endpoints inclusive.
+6. When `HolidaysBetween` is called on the holidayjp provider with a `from` date and a `to` date, the go-heijitu ライブラリ shall return all Japanese national holidays in that range with both endpoints inclusive, in ascending date order.
 7. The go-heijitu ライブラリ shall not require any external network connection for holidayjp provider operations.
 
 ---
@@ -57,6 +57,8 @@ Step 3（caoCsv）・Step 4（googleCalendar）の各プロバイダー実装は
 1. When `FirstBusinessDayOfMonth(ctx, year, month)` is called, the go-heijitu ライブラリ shall return the first calendar day of that month that qualifies as a business day.
 2. When the 1st day of the specified month is not a business day (weekend, holiday, or excluded date), the go-heijitu ライブラリ shall continue searching subsequent days of that month until a business day is found.
 3. If the `HolidayProvider` returns an error during a `FirstBusinessDayOfMonth` search, the go-heijitu ライブラリ shall propagate that error to the caller without suppressing it.
+
+> **スコープ境界**: 指定月内に営業日が1件も存在しない場合（除外日付の設定次第で理論上起こり得る）の動作は本仕様のスコープ外とし、結果を保証しない。実運用では発生しない想定とする。
 
 ---
 
