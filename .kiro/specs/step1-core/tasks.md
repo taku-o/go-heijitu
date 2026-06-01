@@ -42,9 +42,9 @@
   - _Boundary: config_
   - _Depends: 2.1_
 
-- [ ] 4. BusinessCalendar と Option 関数の実装
+- [x] 4. BusinessCalendar と Option 関数の実装
 
-- [ ] 4.1 Option 型・BusinessCalendar 構造体・コンストラクタの実装
+- [x] 4.1 Option 型・BusinessCalendar 構造体・コンストラクタの実装
   - `type Option func(*BusinessCalendar)` を `option.go` に定義する
   - `provider HolidayProvider` と `excludedDates []MonthDay` を持つ `BusinessCalendar` 構造体を `calendar.go` に定義する
   - `New(provider HolidayProvider, opts ...Option) *BusinessCalendar` コンストラクタを実装する（渡されたオプションを順に適用する）
@@ -52,7 +52,7 @@
   - `go build ./...` がエラーなく通ること
   - _Requirements: 4.1, 4.2_
 
-- [ ] 4.2 WithConfig オプション関数の実装
+- [x] 4.2 WithConfig オプション関数の実装
   - `WithConfig(configPath string) (Option, error)` を実装する
   - コンストラクタ呼び出し前（`New()` の外）でファイルを読み込み、エラーが発生したら即返す
   - 読み込んだ `excluded_dates` を `excludedDates` に追記するオプション関数を返す
@@ -61,7 +61,7 @@
   - _Requirements: 4.3, 4.4, 4.5_
   - _Depends: 3.2_
 
-- [ ] 4.3 IsBusinessDay 判定ロジックの実装
+- [x] 4.3 IsBusinessDay 判定ロジックの実装
   - `IsBusinessDay(ctx context.Context, t time.Time, extraExcluded ...MonthDay) (bool, error)` を実装する
   - 土曜・日曜 → `false`、`provider.IsHoliday` が祝日と判定 → `false`（エラーは即伝播）、`excludedDates` に一致 → `false`、`extraExcluded` に一致 → `false`（この呼び出し限り）、いずれにも該当しない → `true` の順で判定する
   - excludedDates と extraExcluded の両方に対して除外日付チェックロジックを共通化して重複を排除する

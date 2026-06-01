@@ -13,25 +13,36 @@ const dateLayout = "2006-01-02"
 
 // testProvider は HolidayProvider インターフェースを満たすテスト専用の実装。
 // このファイルのコンパイルが成功することで、インターフェース定義の正しさを保証する。
+// err フィールドが非 nil の場合、各メソッドがそのエラーを返す。
 type testProvider struct {
 	holidays map[string]string // dateLayout キー → 祝日名
+	err      error
 }
 
 // コンパイル時のインターフェース充足チェック。
 var _ heijitu.HolidayProvider = (*testProvider)(nil)
 
 func (p *testProvider) IsHoliday(ctx context.Context, t time.Time) (bool, error) {
+	if p.err != nil {
+		return false, p.err
+	}
 	_, ok := p.holidays[t.Format(dateLayout)]
 	return ok, nil
 }
 
 func (p *testProvider) HolidayName(ctx context.Context, t time.Time) (string, error) {
+	if p.err != nil {
+		return "", p.err
+	}
 	// 祝日でなければ空文字を返す（Requirement 3.5）
 	name := p.holidays[t.Format(dateLayout)]
 	return name, nil
 }
 
 func (p *testProvider) HolidaysBetween(ctx context.Context, from, to time.Time) ([]heijitu.Holiday, error) {
+	if p.err != nil {
+		return nil, p.err
+	}
 	// from > to の場合は空スライスと nil error を返す（Requirement 3.8）
 	if from.After(to) {
 		return []heijitu.Holiday{}, nil
