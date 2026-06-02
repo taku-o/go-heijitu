@@ -16,6 +16,9 @@
 - Step 1 の既存 API・型・インターフェースの変更
 - `NextBusinessDay` における検索上限日数の定義（要件定義外）
 
+### 前提条件
+- 対象は日本の国民祝日であり、サマータイム（DST）のあるタイムゾーンは考慮しない。`AddDate(0,0,1)` による日送りは DST 遷移のない前提で日付が一意に進む（日本時間・`time.UTC` 等が該当）
+
 ## Boundary Commitments
 
 ### This Spec Owns
@@ -80,7 +83,10 @@ graph TB
 （ルートパッケージ: github.com/taku-o/go-heijitu）
 calendar.go                      ← 既存: NextBusinessDay / FirstBusinessDayOfMonth /
                                      FirstBusinessDaysOfYear / Holidays を追加
-calendar_test.go                  ← 既存: 上記4 API のテストケースを追記
+calendar_test.go                  ← 既存: New / Option / IsBusinessDay テスト（Step 1・変更なし）
+calendar_next_business_day_test.go    ← 新規: NextBusinessDay のテスト
+calendar_first_business_day_test.go   ← 新規: FirstBusinessDayOfMonth / FirstBusinessDaysOfYear のテスト
+calendar_holidays_test.go             ← 新規: Holidays のテスト
 providers/
 └── holidayjp/
     ├── provider.go               ← 新規: Provider 型・New()・HolidayProvider 実装
@@ -92,7 +98,7 @@ go.sum                            ← 自動更新
 ### Modified Files
 
 - `calendar.go` — `NextBusinessDay` / `FirstBusinessDayOfMonth` / `FirstBusinessDaysOfYear` / `Holidays` の4メソッドを追加。`isExcluded()` と `IsBusinessDay()` は既存のまま使用
-- `calendar_test.go` — 新規4 API のテストケースを `heijitu_test` パッケージに追記。既存テストは変更しない
+- `calendar_next_business_day_test.go` / `calendar_first_business_day_test.go` / `calendar_holidays_test.go` — 新規4 API のテストケースを `heijitu_test` パッケージに API 単位で分割して追加。既存 `calendar_test.go` は変更しない
 - `go.mod` — `require github.com/holiday-jp/holiday_jp-go` を追加
 
 ## System Flows
@@ -226,6 +232,7 @@ func (bc *BusinessCalendar) NextBusinessDay(ctx context.Context, from time.Time)
 
 - Preconditions: `from` は任意の `time.Time`
 - Postconditions: 返り値は `from` より後の日付であり `IsBusinessDay` が true を返す
+- 返り値は `from` の Location と時刻成分（時:分:秒）を引き継ぐ（深夜0時に正規化しない）。日付計算は `from` の Location 上で行う。一方 `FirstBusinessDayOfMonth` は `time.Local`・0時0分0秒固定で候補日を構築するため、両 API は Location・時刻成分の基準が異なる。利用者が両者の返り値を直接 `Equal` 比較する場合はこの差異に注意する
 
 ---
 
@@ -313,6 +320,9 @@ func (bc *BusinessCalendar) Holidays(ctx context.Context, from, to time.Time) ([
 
 `holidayjp.Provider` の `IsHoliday` と `HolidaysBetween` は、`holiday_jp-go` が埋め込みデータのみを使うため常に `nil` error を返す。
 
+### context の扱い
+`NextBusinessDay` / `FirstBusinessDayOfMonth` の検索ループは `ctx.Done()` を監視しない。`ctx` は `HolidayProvider` の各メソッド呼び出しにのみ伝播する。`FirstBusinessDayOfMonth` は月境界チェックにより有限回で終了し、`NextBusinessDay` は実運用上必ず営業日に到達する前提のため、ループのキャンセル機構は設けない（検索上限の定義は Non-Goals）。
+
 ## Testing Strategy
 
 ### Unit Tests（`providers/holidayjp/provider_test.go`）
@@ -324,7 +334,7 @@ func (bc *BusinessCalendar) Holidays(ctx context.Context, from, to time.Time) ([
 5. `HolidaysBetween`: 祝日を含む期間で正しい件数が返る（両端を含む）、かつ日付昇順で並んでいること
 6. `HolidaysBetween`: `from > to` で空スライスが返る
 
-### Integration Tests（`calendar_test.go` 追記）
+### Integration Tests（`calendar_next_business_day_test.go` / `calendar_first_business_day_test.go` / `calendar_holidays_test.go` に API 単位で分割）
 
 1. `NextBusinessDay`: 金曜日を渡すと翌月曜日が返る（週末スキップ）
 2. `NextBusinessDay`: 祝日前日を渡すと祝日の翌営業日が返る（祝日スキップ）

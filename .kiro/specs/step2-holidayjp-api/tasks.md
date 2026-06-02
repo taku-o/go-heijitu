@@ -29,7 +29,7 @@
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7_
   - _Boundary: holidayjp.Provider_
 
-- [ ] 3 (P). BusinessCalendar 残りAPI の実装
+- [x] 3 (P). BusinessCalendar 残りAPI の実装
   - `NextBusinessDay(ctx, from)`: `from.AddDate(0,0,1)` を起点に `bc.IsBusinessDay(ctx, candidate)` を繰り返し、最初に `true` が返った日付を返す（エラーは即座に返す）
   - `FirstBusinessDayOfMonth(ctx, year, month)`: `time.Date(year, month, 1, 0, 0, 0, 0, time.Local)` を起点に、候補日の月が指定月と異なるまで `bc.IsBusinessDay` を繰り返し、最初に `true` が返った日付を返す（エラーは即座に返す）。月境界チェックを必ず実装し、月をまたいで検索を続けないこと（月内に営業日がない場合の動作はスコープ外）
   - `FirstBusinessDaysOfYear(ctx, year)`: 1月から12月の順に `FirstBusinessDayOfMonth` を呼び出し 12 要素のスライスを返す（いずれかの月でエラーが発生したら即座にそのエラーを返す）
@@ -39,7 +39,7 @@
   - _Boundary: BusinessCalendar_
 
 - [ ] 4. 統合テストと全体検証
-  - `calendar_test.go` に以下のテストを追記する（`heijitu_test` パッケージ、holidayjp プロバイダーとモックプロバイダーを使い分ける）
+  - 以下のテストを API 単位の各テストファイル（NextBusinessDay 系は `calendar_next_business_day_test.go`、FirstBusinessDayOfMonth / FirstBusinessDaysOfYear 系は `calendar_first_business_day_test.go`、Holidays 系は `calendar_holidays_test.go`）に追記する（`heijitu_test` パッケージ、holidayjp プロバイダーとモックプロバイダーを使い分ける）
   - NextBusinessDay: 金曜日（例: 2025-01-10）を渡すと翌月曜日（2025-01-13）が返ることを確認する（holidayjp.New() 使用）
   - NextBusinessDay: 祝日前日を渡すと祝日の翌営業日が返ることを確認する（holidayjp.New() 使用）
   - NextBusinessDay: プロバイダーがエラーを返したとき、そのエラーが呼び出し元に伝播することを確認する（モックプロバイダー使用）
@@ -53,4 +53,4 @@
   - `go test ./...` で新規テストおよび既存テスト（Step 1 実装分）全てがパスすること
   - _Depends: 2.2, 3_
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 3.1, 3.2, 3.3, 4.1, 4.2, 4.3, 5.1, 5.2, 5.3_
-  - _Boundary: BusinessCalendar (calendar_test.go)_
+  - _Boundary: BusinessCalendar (calendar_next_business_day_test.go / calendar_first_business_day_test.go / calendar_holidays_test.go)_

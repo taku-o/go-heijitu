@@ -82,7 +82,20 @@ jj new
 
 -------------
 
+takt --task "/kiro-impl step2-holidayjp-api 3
+必要ならテストを修正して良い。"
 
+/kiro-review-feature step2-holidayjp-api 3
+
+設計を承認します。
+テストの修正もOK。どのようにするかは判断を任せます。
+
+jj new
+
+-------------
+
+takt --task "/kiro-impl step2-holidayjp-api 4
+必要ならテストを修正して良い。"
 
 
 
