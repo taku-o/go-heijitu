@@ -79,7 +79,7 @@ graph TB
 | レイヤー | 選択 | 役割 | 備考 |
 |---------|------|------|------|
 | 祝日データ取得・パース | `github.com/mikan/syukujitsu-go` | 内閣府CSVの取得（`LoadAndParse`/`FetchAndParse`）・Shift_JISデコード・パース・`Find` | go 1.16 module・`go get` で追加 |
-| Shift_JISデコード | `golang.org/x/text v0.3.6` | mikan 経由の推移的依存 | 直接 import しない |
+| Shift_JISデコード | `golang.org/x/text`（patched 版 ≥ v0.3.8） | mikan 経由の推移的依存。直接 import しない | mikan 要求は v0.3.6 だが既知脆弱性（CVE-2022-32149 / CVE-2021-38561）のため最新へ引き上げる |
 | コア言語 | Go 1.23.4（既存） | ライブラリ実装 | 変更なし |
 
 ### モジュール構成の決定

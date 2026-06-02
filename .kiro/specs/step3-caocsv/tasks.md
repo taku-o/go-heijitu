@@ -4,7 +4,8 @@
 
 - [ ] 1.1 mikan/syukujitsu-go の依存追加
   - `go get github.com/mikan/syukujitsu-go` を実行し `go.mod` と `go.sum` を更新する（`golang.org/x/text` は推移的依存として取り込まれる）
-  - 観察可能な完了条件: `go build ./...` がエラーなく通ること（研究D: go 1.23.4 互換を実挙動で確認）
+  - セキュリティ: mikan が要求する `golang.org/x/text v0.3.6` は既知脆弱性（CVE-2022-32149 / CVE-2021-38561）を含むため、`go get golang.org/x/text@latest` で patched 版（v0.3.8 以降）へ引き上げ、`go mod tidy` を実行する
+  - 観察可能な完了条件: `go build ./...` がエラーなく通り、`go.mod` の `golang.org/x/text` が v0.3.8 以降であること（可能なら `govulncheck ./...` で既知脆弱性が報告されないことも確認する）
   - _Requirements: 4.1, 4.2, 4.3_
 
 - [ ] 1.2 Shift_JIS テストフィクスチャの作成
