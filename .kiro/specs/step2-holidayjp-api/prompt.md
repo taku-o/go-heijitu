@@ -110,6 +110,18 @@ calendar.go:93（実装コード）の同パターンはスコープ外のため
 
 jj new
 
+-------------
 
+!jj-merge feature/step2-holidayjp-api
+/commit-push-pr-update
+
+/review 3
+
+これは対応して、取り込んで。
+  - HolidaysBetween の round-trip（provider.go:40-48）: holiday.Between がキー文字列を返し、それを
+  ParseInLocation で time.Time に戻している。ライブラリ API の制約で現状はやむを得ないが、将来
+  holiday_jp-go が time.Time を直接返す API を提供すれば文字列パースを省ける
+
+取り込まずでOK
 
 
