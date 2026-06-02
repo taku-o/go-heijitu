@@ -99,6 +99,22 @@ jj new
 
 -------------
 
+/kiro-spec-design step3-caocsv
+/kiro-validate-design step3-caocsv
+
+Issue 1・2 を design.md に反映する
+
+/kiro-approve-design step3-caocsv
+jj new
+
+-------------
+
+/kiro-spec-tasks step3-caocsv
+
+
+
+/kiro-approve-task step3-caocsv
+jj new
 
 
 

@@ -191,9 +191,12 @@ func (p *Provider) HolidayName(_ context.Context, t time.Time) (string, error) {
 - ローカルモード: `testdata/syukujitsu_test.csv`（Shift_JIS）で IsHoliday / HolidayName / HolidaysBetween を網羅。存在しない `CSVPath` → `New` がエラー、もユニットテスト。
 - オンラインモード（`FetchAndParse`）: ネットワーク依存のため `//go:build integration` タグで分離し、通常の `go test ./...` から除外する（workplan Step 4 の googleCalendar と同じ方針で統一）。
 
-**D. mikan の未確認点（実装着手時に実挙動で確認）**
-- (1) `LoadAndParse` / `FetchAndParse` がヘッダ行を内部除外するか、(2) go 1.23.4 での `go get` / `go build` 互換性、(3) `Find` の日付突合が壁時計 Y/M/D 基準か（B との整合）。
-- これらはソース推測で決めず、実装の最初に「`go get` → フィクスチャを読み込み、既知の祝日1件・非祝日1件・総件数を assert」する小さな確認で確定する。`Find` が B と異なる突合をする場合のみ、`HolidaysBetween` と挙動を揃える追加処理を検討する。
+**D. mikan の確認点（design フェーズでソース確認済み / 2026-06-03）**
+当初「実装時に実挙動で確認」としていた3点を、`mikan/syukujitsu-go` のソース（`main` ブランチ）で確認した。
+- (1) **ヘッダ行除外**: `Parse` は `for i, row := range records { if i == 0 { continue } ... }` で1行目をスキップ → ヘッダは Entry に混入しない。呼び出し側のスキップ不要。
+- (2) **go 互換**: `go.mod` は `go 1.16`・`require golang.org/x/text v0.3.6`。go 1.23.4 で問題なくビルド可能、`x/text` は推移的依存。
+- (3) **`Find` の突合基準**: `if time.Year() == entry.Year && int(time.Month()) == entry.Month && time.Day() == entry.Day` ＝ **壁時計 Y/M/D・TZ変換なし**。方針 B と完全一致するため、`IsHoliday`/`HolidayName`（Find 委譲）と `HolidaysBetween`（自前・暦日基準）の挙動が揃う。
+- 残作業: 実装時の `go get` → `go build` / フィクスチャでの assert は、上記確認の最終検証として通常どおり実施する。
 
 ### planning docs の整合
 本決定に合わせ `docs/planning/{api-spec.md, design.md, structure.md, workplan.md}` の `Options` 定義（`CSVURL` 廃止）・依存ライブラリ（Step3 を `mikan/syukujitsu-go` に）・「両方空ならエラー」記述を更新済み。
