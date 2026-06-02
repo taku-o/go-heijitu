@@ -7,6 +7,7 @@ import (
 	"time"
 
 	heijitu "github.com/taku-o/go-heijitu"
+	holidayjp "github.com/taku-o/go-heijitu/providers/holidayjp"
 )
 
 // --- FirstBusinessDayOfMonth のテスト ---
@@ -239,7 +240,7 @@ func TestFirstBusinessDaysOfYear_ConsistentWithFirstBusinessDayOfMonth(t *testin
 	}
 
 	// Then: 各要素が FirstBusinessDayOfMonth の結果と一致する（Requirement 4.2）
-	for i := 0; i < 12; i++ {
+	for i := range 12 {
 		month := time.Month(i + 1)
 		monthResult, err := bc.FirstBusinessDayOfMonth(ctx, 2024, month)
 		if err != nil {
@@ -269,5 +270,59 @@ func TestFirstBusinessDaysOfYear_ProviderError(t *testing.T) {
 	}
 	if !errors.Is(err, providerErr) {
 		t.Errorf("FirstBusinessDaysOfYear: expected %v, got %v", providerErr, err)
+	}
+}
+
+// --- holidayjp プロバイダーを使った統合テスト ---
+
+// TestFirstBusinessDayOfMonth_Integration_HolidayOnFirst は holidayjp プロバイダーで月初が祝日の場合に翌営業日が返ることを確認する。
+func TestFirstBusinessDayOfMonth_Integration_HolidayOnFirst(t *testing.T) {
+	// Given: holidayjp プロバイダーと2026年1月（1/1は元日・木曜日）
+	p := holidayjp.New()
+	bc := heijitu.New(p)
+	ctx := context.Background()
+
+	// When: 2026年1月の FirstBusinessDayOfMonth を呼ぶ
+	got, err := bc.FirstBusinessDayOfMonth(ctx, 2026, time.January)
+
+	// Then: 元日をスキップして1月2日（金曜日）が返る
+	if err != nil {
+		t.Fatalf("FirstBusinessDayOfMonth returned error: %v", err)
+	}
+	if got.Day() != 2 || got.Month() != time.January || got.Year() != 2026 {
+		t.Errorf("FirstBusinessDayOfMonth(2026, January) = %v, want 2026-01-02", got.Format(dateLayout))
+	}
+}
+
+// TestFirstBusinessDaysOfYear_Integration_Returns12 は holidayjp プロバイダーで2026年の12件のスライスが返ることを確認する。
+func TestFirstBusinessDaysOfYear_Integration_Returns12(t *testing.T) {
+	// Given: holidayjp プロバイダー
+	p := holidayjp.New()
+	bc := heijitu.New(p)
+	ctx := context.Background()
+
+	// When: 2026年の FirstBusinessDaysOfYear を呼ぶ
+	got, err := bc.FirstBusinessDaysOfYear(ctx, 2026)
+
+	// Then: 12要素のスライスが返り、各要素が対応する月の最初の営業日（祝日・土日スキップ後）である
+	if err != nil {
+		t.Fatalf("FirstBusinessDaysOfYear returned error: %v", err)
+	}
+	if len(got) != 12 {
+		t.Fatalf("FirstBusinessDaysOfYear: got %d elements, want 12", len(got))
+	}
+	// 2026年各月の最初の営業日（1月=元日,2月初=日曜,3月初=日曜,8月初=土曜,11月初=日曜などをスキップ）。
+	wantDays := [12]int{2, 2, 2, 1, 1, 1, 1, 3, 1, 1, 2, 1}
+	for i, d := range got {
+		expectedMonth := time.Month(i + 1)
+		if d.Month() != expectedMonth {
+			t.Errorf("FirstBusinessDaysOfYear[%d]: month = %v, want %v", i, d.Month(), expectedMonth)
+		}
+		if d.Year() != 2026 {
+			t.Errorf("FirstBusinessDaysOfYear[%d]: year = %d, want 2026", i, d.Year())
+		}
+		if d.Day() != wantDays[i] {
+			t.Errorf("FirstBusinessDaysOfYear[%d] (%v月): day = %d, want %d", i, expectedMonth, d.Day(), wantDays[i])
+		}
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	heijitu "github.com/taku-o/go-heijitu"
+	holidayjp "github.com/taku-o/go-heijitu/providers/holidayjp"
 )
 
 // --- Holidays のテスト ---
@@ -158,5 +159,44 @@ func TestHolidays_ProviderError(t *testing.T) {
 	}
 	if !errors.Is(err, providerErr) {
 		t.Errorf("Holidays: expected %v, got %v", providerErr, err)
+	}
+}
+
+// --- holidayjp プロバイダーを使った統合テスト ---
+
+// TestHolidays_Integration_ReturnsHolidaysInRange は holidayjp プロバイダーで指定期間の祝日が正しい件数で返ることを確認する。
+func TestHolidays_Integration_ReturnsHolidaysInRange(t *testing.T) {
+	// Given: holidayjp プロバイダーと2026年1月1日〜3月31日の範囲
+	// 2026年1〜3月の祝日: 元日(1/1)、成人の日(1/12)、建国記念の日(2/11)、天皇誕生日(2/23)、春分の日(3/20) = 5件
+	p := holidayjp.New()
+	bc := heijitu.New(p)
+	ctx := context.Background()
+	from := time.Date(2026, time.January, 1, 0, 0, 0, 0, time.UTC)
+	to := time.Date(2026, time.March, 31, 0, 0, 0, 0, time.UTC)
+
+	// When: 2026年1月1日〜3月31日の範囲で Holidays を呼ぶ
+	got, err := bc.Holidays(ctx, from, to)
+
+	// Then: 5件の祝日が日付昇順・正しい名称で返る
+	if err != nil {
+		t.Fatalf("Holidays returned error: %v", err)
+	}
+	want := []heijitu.Holiday{
+		{Date: time.Date(2026, time.January, 1, 0, 0, 0, 0, time.UTC), Name: "元日"},
+		{Date: time.Date(2026, time.January, 12, 0, 0, 0, 0, time.UTC), Name: "成人の日"},
+		{Date: time.Date(2026, time.February, 11, 0, 0, 0, 0, time.UTC), Name: "建国記念の日"},
+		{Date: time.Date(2026, time.February, 23, 0, 0, 0, 0, time.UTC), Name: "天皇誕生日"},
+		{Date: time.Date(2026, time.March, 20, 0, 0, 0, 0, time.UTC), Name: "春分の日"},
+	}
+	if len(got) != len(want) {
+		t.Fatalf("Holidays(2026-01-01 to 2026-03-31): got %d holidays, want %d", len(got), len(want))
+	}
+	for i, w := range want {
+		if !got[i].Date.Equal(w.Date) {
+			t.Errorf("Holidays[%d].Date = %s, want %s", i, got[i].Date.Format(dateLayout), w.Date.Format(dateLayout))
+		}
+		if got[i].Name != w.Name {
+			t.Errorf("Holidays[%d].Name = %q, want %q", i, got[i].Name, w.Name)
+		}
 	}
 }

@@ -96,6 +96,19 @@ jj new
 
 takt --task "/kiro-impl step2-holidayjp-api 4
 必要ならテストを修正して良い。"
+/kiro-review-feature step2-holidayjp-api 4
+
+/code-review
+
+/simplify-loop
+
+これはどうなった？
+> diagnostics の line 243 range over int は私の変更箇所外（既存コード）の可能性が高いため確認します。
+
+こちら対応してください
+calendar.go:93（実装コード）の同パターンはスコープ外のため未対応（希望あれば対応可
+
+jj new
 
 
 

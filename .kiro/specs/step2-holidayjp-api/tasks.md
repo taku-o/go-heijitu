@@ -38,9 +38,9 @@
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 3.1, 3.2, 3.3, 4.1, 4.2, 4.3, 5.1, 5.2, 5.3_
   - _Boundary: BusinessCalendar_
 
-- [ ] 4. 統合テストと全体検証
+- [x] 4. 統合テストと全体検証
   - 以下のテストを API 単位の各テストファイル（NextBusinessDay 系は `calendar_next_business_day_test.go`、FirstBusinessDayOfMonth / FirstBusinessDaysOfYear 系は `calendar_first_business_day_test.go`、Holidays 系は `calendar_holidays_test.go`）に追記する（`heijitu_test` パッケージ、holidayjp プロバイダーとモックプロバイダーを使い分ける）
-  - NextBusinessDay: 金曜日（例: 2025-01-10）を渡すと翌月曜日（2025-01-13）が返ることを確認する（holidayjp.New() 使用）
+  - NextBusinessDay: 金曜日（例: 2025-01-10）を渡すと土日および 2025-01-13（成人の日）をスキップして翌営業日（2025-01-14 火曜日）が返ることを確認する（holidayjp.New() 使用）
   - NextBusinessDay: 祝日前日を渡すと祝日の翌営業日が返ることを確認する（holidayjp.New() 使用）
   - NextBusinessDay: プロバイダーがエラーを返したとき、そのエラーが呼び出し元に伝播することを確認する（モックプロバイダー使用）
   - NextBusinessDay: `WithExcludedDates` で登録した日付が候補からスキップされることを確認する

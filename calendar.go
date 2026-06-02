@@ -90,7 +90,7 @@ func (bc *BusinessCalendar) FirstBusinessDayOfMonth(ctx context.Context, year in
 // index 0 が1月、index 11 が12月に対応する。
 func (bc *BusinessCalendar) FirstBusinessDaysOfYear(ctx context.Context, year int) ([]time.Time, error) {
 	result := make([]time.Time, 12)
-	for i := 0; i < 12; i++ {
+	for i := range 12 {
 		month := time.Month(i + 1)
 		d, err := bc.FirstBusinessDayOfMonth(ctx, year, month)
 		if err != nil {

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	heijitu "github.com/taku-o/go-heijitu"
+	holidayjp "github.com/taku-o/go-heijitu/providers/holidayjp"
 )
 
 // --- NextBusinessDay のテスト ---
@@ -185,5 +186,52 @@ func TestNextBusinessDay_ProviderError(t *testing.T) {
 	}
 	if !errors.Is(err, providerErr) {
 		t.Errorf("NextBusinessDay: expected %v, got %v", providerErr, err)
+	}
+}
+
+// --- holidayjp プロバイダーを使った統合テスト ---
+
+// TestNextBusinessDay_Integration_FridaySkipsWeekendAndHoliday は holidayjp プロバイダーで
+// 金曜日から土日および直後の祝日をスキップして翌営業日が返ることを確認する。
+func TestNextBusinessDay_Integration_FridaySkipsWeekendAndHoliday(t *testing.T) {
+	// Given: holidayjp プロバイダーと2025-01-10（金曜日）
+	// 2025-01-11（土）、1/12（日）、1/13（月・成人の日）をスキップして1/14（火）が翌営業日
+	p := holidayjp.New()
+	bc := heijitu.New(p)
+	ctx := context.Background()
+	friday := time.Date(2025, time.January, 10, 0, 0, 0, 0, time.UTC)
+
+	// When: 金曜日に NextBusinessDay を呼ぶ
+	got, err := bc.NextBusinessDay(ctx, friday)
+
+	// Then: 土日+祝日をスキップして火曜日（2025-01-14）が返る
+	if err != nil {
+		t.Fatalf("NextBusinessDay returned error: %v", err)
+	}
+	want := time.Date(2025, time.January, 14, 0, 0, 0, 0, time.UTC)
+	if !got.Equal(want) {
+		t.Errorf("NextBusinessDay(%v) = %v, want %v", friday.Format(dateLayout), got.Format(dateLayout), want.Format(dateLayout))
+	}
+}
+
+// TestNextBusinessDay_Integration_SkipsHoliday は holidayjp プロバイダーで祝日をスキップして翌営業日が返ることを確認する。
+func TestNextBusinessDay_Integration_SkipsHoliday(t *testing.T) {
+	// Given: holidayjp プロバイダーと2025-02-10（月曜日）
+	// 2025-02-11（火曜日）は建国記念の日
+	p := holidayjp.New()
+	bc := heijitu.New(p)
+	ctx := context.Background()
+	monday := time.Date(2025, time.February, 10, 0, 0, 0, 0, time.UTC)
+
+	// When: 翌日が祝日の月曜日に NextBusinessDay を呼ぶ
+	got, err := bc.NextBusinessDay(ctx, monday)
+
+	// Then: 建国記念の日をスキップして水曜日（2025-02-12）が返る
+	if err != nil {
+		t.Fatalf("NextBusinessDay returned error: %v", err)
+	}
+	want := time.Date(2025, time.February, 12, 0, 0, 0, 0, time.UTC)
+	if !got.Equal(want) {
+		t.Errorf("NextBusinessDay(%v) = %v, want %v", monday.Format(dateLayout), got.Format(dateLayout), want.Format(dateLayout))
 	}
 }
