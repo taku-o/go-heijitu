@@ -111,7 +111,9 @@ jj new
 
 /kiro-spec-tasks step3-caocsv
 
-
+実装時に調査する項目があるよね？
+それはどのタイミングでやることになっている？
+早い段階のタスクでやりたい。
 
 /kiro-approve-task step3-caocsv
 jj new
