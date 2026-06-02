@@ -126,6 +126,8 @@ jj new
 
 jj new
 
+requirements/design の再承認は不要
+
 !jj-merge feature/step3-caocsv
 /commit-commands:commit-push-pr
 
