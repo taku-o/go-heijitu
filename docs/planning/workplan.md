@@ -96,19 +96,19 @@
 ### 作業内容
 
 **caoCsv プロバイダーの実装**
-- `providers/caoCsv/provider.go`: `Options`（CSVPath / CSVURL）を受け取る `New()`
-- ローカルCSVファイルの読み込みモード
-- URLからCSVを取得するモード（HTTP GET）
-- Shift_JIS デコード処理（`golang.org/x/text/encoding/japanese` を使用）
-- CSVパース → `map[string]string`（"2006-01-02" → 祝日名）への変換
-- `go get golang.org/x/text`
+- `providers/caoCsv/provider.go`: `Options`（CSVPath）を受け取る `New()`
+- ローカルCSVファイルの読み込みモード（`CSVPath` 指定時 → `syukujitsu.LoadAndParse`）
+- オンライン取得モード（`CSVPath` 空時 → `syukujitsu.FetchAndParse`、内閣府固定URL）
+- CSV取得・Shift_JIS デコード・パースは `github.com/mikan/syukujitsu-go` に委譲
+- パース結果（`[]Entry`）を保持。点照合（IsHoliday/HolidayName）は mikan `Find` に委譲、`HolidaysBetween` のみ自前で範囲フィルタ＋昇順ソート
+- `go get github.com/mikan/syukujitsu-go`
 
 **テスト**
 - `providers/caoCsv/provider_test.go`:
   - ローカルCSVファイルを使った IsHoliday / HolidayName / HolidaysBetween の動作確認
-  - テスト用に最小限のCSVファイル（`testdata/syukujitsu_test.csv`）を用意する
-  - CSVPath と CSVURL の両方指定時に CSVPath が優先されること
-  - どちらも空の場合にエラーが返ること
+  - テスト用に最小限のCSVファイル（`testdata/syukujitsu_test.csv`、Shift_JIS）を用意する
+  - `CSVPath` 指定時にローカルファイルが読み込まれること
+  - オンライン取得モード（`FetchAndParse`）はネットワーク依存のため、通常テストでの扱いを設計時に決める
 
 ### 完了条件
 - `go test ./providers/caoCsv/...` が全て通る
@@ -202,7 +202,8 @@ Google Calendar APIを使った `HolidayProvider` 実装を追加する。
 |-----------|------------|
 | `github.com/holiday-jp/holiday_jp-go` | Step 2 |
 | `gopkg.in/yaml.v3` | Step 1 |
-| `golang.org/x/text` | Step 3 |
+| `github.com/mikan/syukujitsu-go` | Step 3 |
+| `golang.org/x/text`（mikan 経由の推移的依存） | Step 3 |
 | `google.golang.org/api/calendar/v3` | Step 4 |
 | `golang.org/x/oauth2` | Step 4 |
 
