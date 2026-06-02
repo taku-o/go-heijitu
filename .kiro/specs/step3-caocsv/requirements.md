@@ -61,7 +61,7 @@ Step 4（googleCalendar）プロバイダーの実装、および Step 1・Step 
 
 #### Acceptance Criteria
 
-1. The caoCsv プロバイダー shall decode the CSV content from Shift_JIS encoding before interpreting it.
+1. The caoCsv プロバイダー shall decode the CSV content from Shift_JIS encoding to UTF-8 before parsing the rows.
 2. The caoCsv プロバイダー shall parse each holiday row of the 内閣府CSV into a date and its corresponding holiday name.
 3. While parsing the CSV, the caoCsv プロバイダー shall exclude the header row from the holiday data.
 4. If the CSV content cannot be decoded or parsed, the caoCsv プロバイダー shall return an error from `New` describing the failure, without suppressing it.

@@ -10,7 +10,8 @@
 - [ ] 1.2 Shift_JIS テストフィクスチャの作成
   - `providers/caoCsv/testdata/syukujitsu_test.csv` を作成する。内閣府CSVと同形式（先頭ヘッダ行 + `YYYY/M/D, 祝日名` の2列）で、複数の既知の祝日（例: 元日・成人の日・建国記念の日など数件）を収録する
   - ファイルは **Shift_JIS エンコード**で作成する（UTF-8 で作ると mikan のデコードと整合せず文字化け検証が成立しないため）
-  - 観察可能な完了条件: ファイルが Shift_JIS で保存され、ヘッダ行 + 複数祝日行を含むこと（読込検証は 2.2 で行う）
+  - 観察可能な完了条件: ファイルがヘッダ行 + 複数祝日行を含み、かつ **Shift_JIS であることを検証**できること（例: `file providers/caoCsv/testdata/syukujitsu_test.csv` が UTF-8 と表示されない、`nkf -g` / `hexdump` で Shift_JIS バイト列を確認、または UTF-8 へ変換し直して祝日名が一致する等。UTF-8 で誤作成していないことを確認する）。読込検証は 2.2 で行う
+  - 補足: フィクスチャの祝日行数を控えておく（2.2・3.2 のヘッダ非混入・件数検証で参照する）
   - _Depends: 1.1_
   - _Requirements: 4.1, 4.2, 4.3_
 
@@ -29,6 +30,7 @@
   - `providers/caoCsv/provider_test.go` を新規作成する（`package caoCsv_test`）。`New` / `IsHoliday` / `HolidayName` を直接呼ぶテストを書く（この時点では `HolidaysBetween` 未実装のため、インターフェース充足チェックは 3.2 で行う）
   - `New`: フィクスチャを `CSVPath` に指定 → エラーなく読み込め、収録祝日数と一致する件数が得られること（研究D: ヘッダ行が Entry に混入しない）。存在しないパス → エラーが返ること
   - `IsHoliday` / `HolidayName`: 既知の祝日（壁時計 Y/M/D）→ `true` / 期待する祝日名（例: "元日"）と**完全一致し文字化けしない**こと（研究D: `Find` の壁時計突合・Shift_JIS デコードを実挙動で確認）。祝日でない日付 → `false` / 空文字・エラーなし
+  - ヘッダ非混入の確認: フィクスチャのヘッダ行（日付でない文字列、例: "国民の祝日・休日月日"）が祝日として誤検出されないこと（フィクスチャに無い任意の日付で `IsHoliday` が `false`、かつ既知祝日のみ `true` になることで間接確認。件数ベースの厳密確認は HolidaysBetween 実装後の 3.2 で行う）
   - 観察可能な完了条件: `go test ./providers/caoCsv/...` で全テストがパスし、研究D（ヘッダ除外・`Find` の壁時計突合・Shift_JIS デコード）が実挙動で確認できること。ここで前提が崩れていれば後続（HolidaysBetween）着手前に検知する
   - _Depends: 1.2, 2.1_
   - _Requirements: 1.1, 1.2, 2.1, 2.2, 4.1, 4.2, 4.3, 5.1, 5.2, 5.3, 5.4_
@@ -46,10 +48,13 @@
 - [ ] 3.2 HolidaysBetween のテストとインターフェース充足チェック
   - `provider_test.go` に追記する。`var _ heijitu.HolidayProvider = (*caoCsv.Provider)(nil)` を置き、3メソッド揃った Provider のインターフェース充足をコンパイル時に保証する
   - `HolidaysBetween`: 祝日を含む期間で正しい件数が両端含めて返り、日付昇順で並ぶことを確認する
+  - ヘッダ非混入の件数確認: フィクスチャの全祝日を含む十分広い期間を指定し、返却件数が **フィクスチャの祝日行数（ヘッダ行を除いた行数）と一致**すること（ヘッダが Entry に混入していないことを件数で確認）
+  - 異なる Location での範囲判定: 同一の暦日範囲を `time.UTC` と JST（`time.FixedZone` 等）で指定しても、期待どおり両端含む同じ祝日集合が返ること（壁時計暦日基準の確認）
   - `from > to`（暦日で逆順）で空スライスと `nil` error が返ることを確認する（holidayjp との挙動一貫性）
+  - `from == to` で、その日が祝日なら1件・非祝日なら0件が返ることを確認する（両端含むの境界）
   - 観察可能な完了条件: `go test ./providers/caoCsv/...` で全テストがパスすること
   - _Depends: 3.1_
-  - _Requirements: 1.1, 5.5_
+  - _Requirements: 1.1, 4.3, 5.5_
   - _Boundary: caoCsv.Provider (provider_test.go)_
 
 - [ ] 4. (P) オンラインモードの integration テスト
@@ -62,7 +67,7 @@
 
 - [ ] 5. 全体検証
   - `go build ./...` がエラーなく通ること
-  - `go test ./...`（integration タグなし）で新規テストおよび既存テスト（Step 1・Step 2 実装分）が全てパスすること
+  - `go test ./...`（integration タグなし）で新規テストおよび既存テスト（Step 1・Step 2 実装分）が全てパスすること。なお `//go:build integration` のオンラインテスト（タスク4）はネットワーク依存のため本コマンドの対象外であり、その検証はタスク4で別途実施済みとする（本タスクでは再実行しない）
   - `go vet ./...` がエラーなく通ること
   - 観察可能な完了条件: 上記コマンドが全てエラー0件で完了すること
   - _Depends: 3.2, 4_

@@ -118,5 +118,20 @@ jj new
 /kiro-approve-task step3-caocsv
 jj new
 
+-------------
+
+/kiro-review-spec step3-caocsv
+
+軽微な問題、注意事項、対応推奨アクションにあげられている項目は修正してください。
+
+jj new
+
+!jj-merge feature/step3-caocsv
+/commit-commands:commit-push-pr
+
+/review 4
+
+
+
 
 

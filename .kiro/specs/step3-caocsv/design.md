@@ -243,9 +243,11 @@ func (p *Provider) HolidaysBetween(ctx context.Context, from, to time.Time) ([]h
     - `toDate   = time.Date(to.Year(), to.Month(), to.Day(), 0, 0, 0, 0, from.Location())`（`to` も `from.Location()` を使用し、両端を同一基準に揃える）
     - 各 Entry について `entryDate = time.Date(e.Year, time.Month(e.Month), e.Day, 0, 0, 0, 0, from.Location())` を構築し、`!entryDate.Before(fromDate) && !entryDate.After(toDate)` を満たすものを含める（両端含む）
     - 結果として `from > to`（暦日で逆順）の場合は条件を満たす Entry が無く空スライスを返す。これは holidayjp の `from > to → 空スライス` と挙動が一致する
+    - `from == to`（同一暦日）の場合、その日が祝日なら1件、非祝日なら0件を返す（`!Before && !After` により両端を含むため）
 - Validation:
-  - `Find` は `t.Year()/int(t.Month())/t.Day()` で突合する（壁時計 Y/M/D・TZ変換なし）ため、前提条件の正規化方針と一致する。`HolidaysBetween` も同じ暦日基準で範囲判定し、点照合と範囲取得の挙動を揃える
-  - `New` は `var _ heijitu.HolidayProvider = (*Provider)(nil)` をテストに置きコンパイル時にインターフェース充足を保証する
+  - `Find` は `t.Year()/int(t.Month())/t.Day()` で突合する（壁時計 Y/M/D・TZ変換なし。research.md D でソース確認済み）ため、前提条件の正規化方針と一致する。`HolidaysBetween` も同じ暦日基準で範囲判定し、点照合と範囲取得の挙動を揃える
+  - `Find` が返す `name` は `Entry.Name`（CSVの祝日名列）であり、祝日行では非空文字列である。したがって `HolidayName` は祝日で非空・非祝日で空文字となる。万一空文字の祝日名が混入しないことは、フィクスチャでの祝日名完全一致テスト（2.2）で担保する
+  - `New` は `var _ heijitu.HolidayProvider = (*Provider)(nil)` をテストに置きコンパイル時にインターフェース充足を保証する（`HolidaysBetween` 実装後の 3.2 で配置）
 - Risks:
   - ローカルモードで `ctx` は未使用（`LoadAndParse` が `ctx` を取らないため）。インターフェース契約上 `New(ctx, ...)` のシグネチャは維持する
   - オンラインモードはネットワーク依存。テストは `//go:build integration` で分離する
@@ -264,6 +266,11 @@ func (p *Provider) HolidaysBetween(ctx context.Context, from, to time.Time) ([]h
 | `Find` による非祝日 | `HolidayName` が `("", nil)` に変換（要件 5.4） |
 
 `New` 完了後の `IsHoliday` / `HolidayName` / `HolidaysBetween` はメモリ内データのみを参照するため、常に `nil` error を返す。
+
+### エラーの粒度・伝播方針
+- `New` は mikan（`LoadAndParse` / `FetchAndParse`）が返した `error` を**そのまま返す**（追加のラップ・再フォーマットは行わない）。最小実装の方針に従い、独自のエラー型・エラーコード・メッセージ整形は導入しない。
+- オンラインモードの取得失敗は、HTTP 非 2xx・タイムアウト・空レスポンス・取得後のデコード/パース失敗を含め、すべて mikan が `error` として返し、`New` がそれを伝播する（要件 3.2 / 4.4）。取得先URL・HTTPクライアント設定（タイムアウト等）は mikan `FetchAndParse` が所有し、本スペックでは制御しない（Allowed Dependencies の委譲範囲）。
+- 内閣府CSVのフォーマット（列構成・エンコード）解釈も mikan が所有する。フォーマット変更時の追従は mikan のバージョン更新で対応する方針とし、本スペックでは独自のフォーマット判定・フォールバックを持たない。依存バージョンは `go.mod` で固定する。
 
 ### context の扱い
 `ctx` はオンラインモードの `FetchAndParse(ctx)` にのみ伝播する。ローカルモードおよび `New` 後の3メソッドでは `ctx` を使用しない（`Find`・範囲フィルタはメモリ内処理）。
