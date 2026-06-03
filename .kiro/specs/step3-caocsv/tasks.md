@@ -66,7 +66,7 @@
   - _Requirements: 1.3, 3.1_
   - _Boundary: caoCsv.Provider (provider_integration_test.go)_
 
-- [ ] 5. 全体検証
+- [x] 5. 全体検証
   - `go build ./...` がエラーなく通ること
   - `go test ./...`（integration タグなし）で新規テストおよび既存テスト（Step 1・Step 2 実装分）が全てパスすること。なお `//go:build integration` のオンラインテスト（タスク4）はネットワーク依存のため本コマンドの対象外であり、その検証はタスク4で別途実施済みとする（本タスクでは再実行しない）
   - `go vet ./...` がエラーなく通ること
