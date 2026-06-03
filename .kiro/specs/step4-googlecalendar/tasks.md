@@ -7,9 +7,9 @@
   - 補足: 本依存は要件4・要件5（Calendar API からの祝日取得と HolidayProvider 実装）の前提となるが、本タスクの成果物は依存の追加とビルド成立のみであり、振る舞い検証は後続タスクで行う
   - 観察可能な完了条件: `go build ./...` がエラーなく通り、`go.mod` の `require` に `google.golang.org/api` が追加されていること
 
-- [ ] 2. googleCalendar プロバイダーの実装
+- [x] 2. googleCalendar プロバイダーの実装
 
-- [ ] 2.1 New と認証方式選択の実装
+- [x] 2.1 New と認証方式選択の実装
   - `providers/googleCalendar/provider.go` を新規作成する（`package googleCalendar`）。固定 Calendar ID 定数（`ja.japanese.official#holiday@group.v.calendar.google.com`）・`Options`（`APIKey` / `CredentialsFile`）・`Provider`（`service *calendar.Service` を保持）・`New(ctx, opts)` を定義する
   - `New` の認証分岐: `CredentialsFile` が非空なら `option.WithAuthCredentialsFile(option.ServiceAccount, opts.CredentialsFile)` と `option.WithScopes(calendar.CalendarReadonlyScope)` を付与（`APIKey` 併用時も優先。deprecated な `WithCredentialsFile` は使わない）。空かつ `APIKey` 非空なら `option.WithAPIKey`（スコープ指定なし）。両方空なら `calendar.NewService` を呼ばずにエラーを返す（ネットワークアクセスなし）。`NewService` のエラーは握りつぶさず伝播し、成功時に `Provider{service}` を返す
   - 観察可能な完了条件: `go build ./providers/googleCalendar/...` がエラーなく通ること
@@ -17,7 +17,7 @@
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 2.1, 3.1, 3.2_
   - _Boundary: googleCalendar.Provider_
 
-- [ ] 2.2 祝日取得ヘルパーと単日判定メソッドの実装
+- [x] 2.2 祝日取得ヘルパーと単日判定メソッドの実装
   - `provider.go` に private ヘルパー `holidaysInWindow(ctx, timeMin, timeMax, loc)` を実装する。固定 Calendar ID に対し `Events.List` を `TimeMin`/`TimeMax`（UTC・RFC3339）・`SingleEvents(true)`・`OrderBy("startTime")` で発行し、`NextPageToken` で全ページ取得する。終日イベント（`Start.Date` 非空）のみを `heijitu.Holiday{Date, Name: Summary}` に変換する。`Do()` のエラーは握りつぶさず伝播する
   - `IsHoliday` / `HolidayName`: 対象日を含む UTC窓（-1日〜+2日）で `holidaysInWindow` を取得し、`Start.Date` が対象日の壁時計 Y/M/D（`t.Format(time.DateOnly)`）に一致するイベントの有無 / `Summary` を返す。`HolidayName` は非祝日で `("", nil)`、`error` は取得失敗時のみ伝播する
   - 観察可能な完了条件: `go build ./providers/googleCalendar/...` がエラーなく通ること（振る舞い検証はネットワーク依存のためタスク4で行う）
@@ -25,7 +25,7 @@
   - _Requirements: 2.2, 4.1, 4.2, 4.3, 4.4, 5.1, 5.2, 5.3, 5.4_
   - _Boundary: googleCalendar.Provider_
 
-- [ ] 2.3 HolidaysBetween の実装
+- [x] 2.3 HolidaysBetween の実装
   - `provider.go` に `HolidaysBetween(ctx, from, to)` を追加する。`from.Location()`・0時で `fromDate`/`toDate` を正規化し、`fromDate.After(toDate)`（暦日で逆順）なら `Events.List` を呼ばず空スライス（`[]heijitu.Holiday{}`）と `nil` を返す（`TimeMin > TimeMax` の API エラー回避、holidayjp / caoCsv との挙動一貫性）。そうでなければ `from-1日`〜`to+2日` の UTC窓で `holidaysInWindow` を取得し、`Start.Date` の暦日が範囲内（両端含む）のものを抽出して `Date.Compare` 昇順にソートして返す
   - 観察可能な完了条件: `go build ./providers/googleCalendar/...` がエラーなく通ること（振る舞い検証はタスク4で行う）
   - _Depends: 2.2_

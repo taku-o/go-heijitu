@@ -84,9 +84,15 @@ takt --task "/kiro-impl step4-googlecalendar 1
 /kiro-review-feature step4-googlecalendar 1
 jj new
 
+-------------
 
+takt --task "/kiro-impl step4-googlecalendar 2
+必要ならテストを修正して良い。"
 
+/kiro-review-feature step4-googlecalendar 2
+jj new
 
+/kiro-review-spec step4-googlecalendar
 
 
 
