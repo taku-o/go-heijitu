@@ -16,9 +16,9 @@
   - _Depends: 1.1_
   - _Requirements: 4.1, 4.2, 4.3_
 
-- [ ] 2. caoCsv プロバイダー（読込・点照合）と mikan 実挙動の早期検証
+- [x] 2. caoCsv プロバイダー（読込・点照合）と mikan 実挙動の早期検証
 
-- [ ] 2.1 New と点照合（IsHoliday / HolidayName）の最小実装
+- [x] 2.1 New と点照合（IsHoliday / HolidayName）の最小実装
   - `providers/caoCsv/provider.go` を新規作成する（`package caoCsv`）。`Options`（`CSVPath` のみ）・`Provider`（`entries []syukujitsu.Entry` を保持）・`New(ctx, opts)` を定義する
   - `New`: `CSVPath` が非空なら `syukujitsu.LoadAndParse(opts.CSVPath)`、空なら `syukujitsu.FetchAndParse(ctx)` を呼び、得た `[]Entry` を保持する。読込・取得・デコード・パースのエラーは握りつぶさず `return nil, err` で伝播する。成功後は追加 I/O を行わない
   - `IsHoliday` / `HolidayName`: `syukujitsu.Find(p.entries, t)` に委譲する。`HolidayName` は非祝日（`found == false`）で `("", nil)`、祝日で `(name, nil)` を返す。`error` は常に `nil`
@@ -27,7 +27,7 @@
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 2.1, 2.2, 2.3, 3.1, 3.2, 3.3, 4.4, 5.1, 5.2, 5.3, 5.4_
   - _Boundary: caoCsv.Provider_
 
-- [ ] 2.2 mikan 実挙動の早期検証 + 点照合の契約テスト
+- [x] 2.2 mikan 実挙動の早期検証 + 点照合の契約テスト
   - `providers/caoCsv/provider_test.go` を新規作成する（`package caoCsv_test`）。`New` / `IsHoliday` / `HolidayName` を直接呼ぶテストを書く（この時点では `HolidaysBetween` 未実装のため、インターフェース充足チェックは 3.2 で行う）
   - `New`: フィクスチャを `CSVPath` に指定 → エラーなく読み込め、収録祝日数と一致する件数が得られること（研究D: ヘッダ行が Entry に混入しない）。存在しないパス → エラーが返ること
   - `IsHoliday` / `HolidayName`: 既知の祝日（壁時計 Y/M/D）→ `true` / 期待する祝日名（例: "元日"）と**完全一致し文字化けしない**こと（研究D: `Find` の壁時計突合・Shift_JIS デコードを実挙動で確認）。祝日でない日付 → `false` / 空文字・エラーなし
