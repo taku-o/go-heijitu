@@ -31,4 +31,13 @@ jj new
 
 -------------
 
+/kiro-spec-design step4-googlecalendar
+/kiro-validate-design step4-googlecalendar
+/kiro-approve-design step4-googlecalendar
+jj new
+
+-------------
+
+
+
 

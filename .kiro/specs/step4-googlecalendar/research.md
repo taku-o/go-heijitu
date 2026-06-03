@@ -113,3 +113,51 @@
 - 設計時は上記「申し送り」1〜6、特に**データ保持モデル**と**認証構築API選定**を先に確定する。
 
 _調査出典: pkg.go.dev（`google.golang.org/api/calendar/v3`・`.../option`）、`golang.org/x/oauth2/google`、参考実装 `github.com/haruotsu/go-jpholiday`。項目「APIキーでの公開カレンダー読み取り」「NewService 構築時に非通信」は公式明文ではなく定着挙動のため、インテグレーションでの確認を要する。_
+
+---
+
+# 設計フェーズ Synthesis（一般化・Build vs Adopt・単純化）
+
+## Summary（設計フェーズ）
+- **Feature**: `step4-googlecalendar`
+- **Discovery Scope**: Extension（既存プロバイダーパターンへの追加）
+- **Key Findings（確定）**:
+  - データ保持モデルは**モデル1（`*calendar.Service` 保持・メソッド毎に期間問い合わせ）**で確定。
+  - 認証構築は `google.golang.org/api/option` の `WithAPIKey` / `WithCredentialsFile` + `WithScopes(calendar.CalendarReadonlyScope)` を採用（Build せず Adopt）。
+  - 日付突合は既存（holidayjp / caoCsv）と同じ**壁時計 Y/M/D**。クエリ窓は UTC に余裕（±1〜2日）を持たせ、取得後に `event.Start.Date` 文字列で厳密フィルタする。
+
+## 1. 一般化（Generalization）
+- Req 5 の3メソッド（`IsHoliday` / `HolidayName` / `HolidaysBetween`）はいずれも「ある期間の祝日イベント集合を取得し、日付で照合する」という同一の下位問題の変種。
+- → 内部に「UTC窓を指定して `Events.List` を取得し、全ページを走査して該当日の `[]heijitu.Holiday` を返す」private ヘルパー（仮称 `holidaysInWindow`）を1つ置き、3メソッドはこれに窓と照合条件を渡す形に一般化する。実装スコープは現要件が要求する範囲に留める（インターフェースのみ一般化、投機実装はしない）。
+
+## 2. Build vs Adopt
+- **採用（Adopt）**: 認証・HTTP・ページングは `google.golang.org/api/calendar/v3` ＋ `google.golang.org/api/option` に全面委譲。APIキー／サービスアカウント双方を option で構築でき、独自の OAuth フローや HTTP クライアントは作らない。
+- **自前（Build）**: 取得した `*calendar.Events` から `heijitu.Holiday` へのマッピングと、壁時計 Y/M/D による範囲フィルタ＋昇順ソートのみ（caoCsv `HolidaysBetween` と同型のロジック）。Calendar API に「単日が祝日か」「期間の祝日一覧」を直接返すAPIは無いため、この変換層は自前が必要。
+
+## 3. 単純化（Simplification）
+- プロバイダーは認証方式ごとにクラス分割せず、`New` 内の分岐で `[]option.ClientOption` を組み立てて単一の `calendar.NewService` に渡す（実装1本）。
+- リトライ・クォータ制御・キャッシュは要件外のため持たない（開発ルール「最適化不要・フォールバック不要」に従う）。
+- 振替休日・祝日判定ロジックは Google Calendar のデータに委ね、ライブラリ側で加工しない（design.md の決定事項を踏襲）。
+
+## Design Decisions（確定）
+
+### Decision: データ保持モデル＝クライアント保持・都度問い合わせ
+- **Context**: Google Calendar は無限範囲のライブAPIで、caoCsv 流の「New 時一括取得」は取得範囲を決められず破綻する（research 本文 §4）。
+- **Selected Approach**: `Provider` は `*calendar.Service` を保持し、各メソッド呼び出し時に対象期間で `Events.List` する。
+- **Trade-offs**: 呼び出し毎にネットワーク往復が発生する（許容。最適化不要）／将来日・過去日も常に正しく判定できる。
+
+### Decision: 認証構築APIの選定
+- **Alternatives**: (a) `option.WithCredentialsFile` + `WithScopes`（established・pkg.go.dev 上 deprecated 注記あり）, (b) `option.WithAuthCredentialsFile(option.ServiceAccount, path)`（deprecation 回避）, (c) `google.CredentialsFromJSON` 自前パース。
+- **Selected Approach**: (a) を採用。サービスアカウントは `option.WithCredentialsFile(path)` + `option.WithScopes(calendar.CalendarReadonlyScope)`、APIキーは `option.WithAPIKey(apiKey)`（スコープ指定なし）。
+- **Rationale**: 最小サーフェスで idiomatic。完了条件の `go vet ./...` は deprecation を報告しないためゲートに影響しない。自前パース(c)は不要な複雑性。
+- **Follow-up**: deprecation を厳密に避けたい場合は (b) へ差し替え可能（インターフェース不変）。
+
+### Decision: 日付突合とクエリ窓
+- **Selected Approach**: 終日イベントの `event.Start.Date`（`YYYY-MM-DD`）を壁時計 Y/M/D として照合。クエリの `TimeMin`/`TimeMax` は UTC で対象日付の前後に余裕（単日照合は -1日〜+2日、範囲は from-1日〜to+2日）を取り、取得後に `Start.Date` で厳密フィルタする。
+- **Rationale**: 終日イベントとタイムゾーン境界での取りこぼしを防ぎつつ、最終判定を文字列一致で決定的にする。`Holiday.Date` は holidayjp / caoCsv と同様 `from.Location()`・0時0分0秒で構築する。
+- **Follow-up**: 実 API レスポンスのフィールド（`Start.Date` の有無・`Summary` の値）はインテグレーションテストで確認する。
+
+## Risks & Mitigations（設計フェーズ追加分）
+- `option.WithCredentialsFile` の deprecation — `go vet` ゲートに影響なし。必要時に `WithAuthCredentialsFile` へ差し替え（緩和）。
+- タイムゾーン境界での終日イベント取りこぼし — クエリ窓に余裕＋取得後の `Start.Date` 厳密フィルタで緩和。
+- 実認証の成否は `New` では確認不能（`.Do()` 必須）— 通常テストは「両方空→エラー」「存在しない認証ファイル→エラー」のネットワーク非依存契約のみ検証し、実取得は `//go:build integration` で分離（緩和）。
