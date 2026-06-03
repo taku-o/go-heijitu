@@ -42,7 +42,7 @@
   - _Requirements: 1.1, 1.4, 3.2_
   - _Boundary: googleCalendar.Provider (provider_test.go)_
 
-- [ ] 4. (P) 実API取得の integration テスト
+- [x] 4. (P) 実API取得の integration テスト
   - `providers/googleCalendar/provider_integration_test.go` を新規作成する。ファイル先頭に `//go:build integration` タグを付与し、通常の `go test ./...` ではビルド対象外にする。APIキーは環境変数 `GOOGLE_CALENDAR_API_KEY` から取得し、未設定なら `t.Skip` でスキップする（認証情報の無い環境でも `go test -tags integration` がエラーにならないようにする）
   - `New`（APIキー認証）→ エラーなくプロバイダーが得られる（要件 1.1, 1.3, 2.1）
   - `IsHoliday`: 既知の祝日（例: 1月1日 元日）→ `true`、平日 → `false`（要件 5.1, 5.2, 4.1, 4.2）。`HolidayName`: 既知の祝日 → 期待する祝日名（文字化けなし）、非祝日 → 空文字（要件 5.3, 5.4）
