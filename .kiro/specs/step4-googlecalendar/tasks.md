@@ -52,7 +52,7 @@
   - _Requirements: 1.1, 1.3, 2.1, 2.2, 4.1, 4.2, 4.4, 5.1, 5.2, 5.3, 5.4, 5.5_
   - _Boundary: googleCalendar.Provider (provider_integration_test.go)_
 
-- [ ] 5. 全体検証
+- [x] 5. 全体検証
   - `go build ./...` がエラーなく通ること
   - `go test ./...`（integration タグなし）で新規テストおよび既存テスト（Step 1〜3 実装分）が全てパスすること。なお `//go:build integration` のオンラインテスト（タスク4）はネットワーク依存のため本コマンドの対象外であり、その検証はタスク4で別途実施済みとする（本タスクでは再実行しない）
   - `go vet ./...` がエラーなく通ること
