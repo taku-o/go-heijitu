@@ -37,16 +37,16 @@
   - _Requirements: 1.1, 1.2, 2.1, 2.2, 4.1, 4.2, 4.3, 5.1, 5.2, 5.3, 5.4_
   - _Boundary: caoCsv.Provider (provider_test.go)_
 
-- [ ] 3. HolidaysBetween の実装とテスト
+- [x] 3. HolidaysBetween の実装とテスト
 
-- [ ] 3.1 HolidaysBetween の実装
+- [x] 3.1 HolidaysBetween の実装
   - `provider.go` に `HolidaysBetween(ctx, from, to)` を追加する。`from.Location()`・0時0分0秒に正規化した暦日で範囲判定する: `fromDate`/`toDate`/`entryDate` を同一 Location の0時で構築し、`!entryDate.Before(fromDate) && !entryDate.After(toDate)` を満たす Entry を `heijitu.Holiday`（`Date` は `from.Location()` で構築）へ変換し、`slices.SortFunc` で日付昇順にソートして返す（両端含む。`from > to` は空スライス）
   - 観察可能な完了条件: `go build ./providers/caoCsv/...` がエラーなく通ること
   - _Depends: 2.2_
   - _Requirements: 5.5_
   - _Boundary: caoCsv.Provider_
 
-- [ ] 3.2 HolidaysBetween のテストとインターフェース充足チェック
+- [x] 3.2 HolidaysBetween のテストとインターフェース充足チェック
   - `provider_test.go` に追記する。`var _ heijitu.HolidayProvider = (*caoCsv.Provider)(nil)` を置き、3メソッド揃った Provider のインターフェース充足をコンパイル時に保証する
   - `HolidaysBetween`: 祝日を含む期間で正しい件数が両端含めて返り、日付昇順で並ぶことを確認する
   - ヘッダ非混入の件数確認: フィクスチャの全祝日を含む十分広い期間を指定し、返却件数が **フィクスチャの祝日行数（ヘッダ行を除いた行数）と一致**すること（ヘッダが Entry に混入していないことを件数で確認）
