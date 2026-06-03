@@ -133,7 +133,27 @@ requirements/design の再承認は不要
 
 /review 4
 
+取り込んでください。
+  改善提案（任意）
+
+  1. tasks.md 1.1 に「golang.org/x/text を patched 版へ更新し govulncheck
+  実行」を1行追加（上記セキュリティ対応）。
+  2. research.md は探索→決定の経緯を保持する構成（冒頭バナーで最終確定へ誘導）。情報量が多いので、実装者
+  は末尾「設計フェーズへの確定方針」を参照すれば足りる旨は明記済み
+
+❯ git、jjが変な状態になってる。
+  feature/step3-caocsv ブランチに切り替えて、綺麗な状態にして
+
 -------------
+
+takt --task "/kiro-impl step3-caocsv 1
+必要ならテストを修正して良い。"
+
+/kiro-review-feature step3-caocsv 1
+jj new
+
+
+
 
 
 

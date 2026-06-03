@@ -1,14 +1,14 @@
 # Implementation Plan
 
-- [ ] 1. Foundation — 依存追加とテストフィクスチャ
+- [x] 1. Foundation — 依存追加とテストフィクスチャ
 
-- [ ] 1.1 mikan/syukujitsu-go の依存追加
+- [x] 1.1 mikan/syukujitsu-go の依存追加
   - `go get github.com/mikan/syukujitsu-go` を実行し `go.mod` と `go.sum` を更新する（`golang.org/x/text` は推移的依存として取り込まれる）
   - セキュリティ: mikan が要求する `golang.org/x/text v0.3.6` は既知脆弱性（CVE-2022-32149 / CVE-2021-38561）を含むため、`go get golang.org/x/text@latest` で patched 版（v0.3.8 以降）へ引き上げ、`go mod tidy` を実行する
   - 観察可能な完了条件: `go build ./...` がエラーなく通り、`go.mod` の `golang.org/x/text` が v0.3.8 以降であること（可能なら `govulncheck ./...` で既知脆弱性が報告されないことも確認する）
   - _Requirements: 4.1, 4.2, 4.3_
 
-- [ ] 1.2 Shift_JIS テストフィクスチャの作成
+- [x] 1.2 Shift_JIS テストフィクスチャの作成
   - `providers/caoCsv/testdata/syukujitsu_test.csv` を作成する。内閣府CSVと同形式（先頭ヘッダ行 + `YYYY/M/D, 祝日名` の2列）で、複数の既知の祝日（例: 元日・成人の日・建国記念の日など数件）を収録する
   - ファイルは **Shift_JIS エンコード**で作成する（UTF-8 で作ると mikan のデコードと整合せず文字化け検証が成立しないため）
   - 観察可能な完了条件: ファイルがヘッダ行 + 複数祝日行を含み、かつ **Shift_JIS であることを検証**できること（例: `file providers/caoCsv/testdata/syukujitsu_test.csv` が UTF-8 と表示されない、`nkf -g` / `hexdump` で Shift_JIS バイト列を確認、または UTF-8 へ変換し直して祝日名が一致する等。UTF-8 で誤作成していないことを確認する）。読込検証は 2.2 で行う
