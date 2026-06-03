@@ -227,5 +227,18 @@ takt --task "/kiro-impl step3-caocsv 5
     ## 結果
     APPROVE — 全受け入れ基準（1.1〜5.5）およびタスク5固有の検証要件（go build / go test / go vet）を全て充足。
 
+jj new
+
 -------------
+
+!jj-merge feature/step3-caocsv
+/commit-push-pr-update
+/review 4
+
+これだけ実行して
+  - x/text v0.14.0（indirect）: PR本文に「脆弱版から引き上げ」とあり既知の GO-2022-1059
+  修正版（>=0.3.8）は満たすが、念のため govulncheck ./...
+  を一度通しておくと「引き上げ完了」の根拠が明確になります（提案のみ）
+
+
 
