@@ -40,6 +40,17 @@ step5-docs
 
 jj new
 
+/kiro-approve-req step5-docs
+
+-------------
+
+
+
+
+
+
+
+
 
 
 
