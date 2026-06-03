@@ -1,0 +1,22 @@
+{
+  "feature": "step4-googlecalendar",
+  "title": "Step 4: googleCalendar（Google Calendar API）プロバイダー実装",
+  "language": "ja",
+  "phase": "requirements-generated",
+  "approvals": {
+    "requirements": {
+      "generated": true,
+      "approved": true
+    },
+    "design": {
+      "generated": false,
+      "approved": false
+    },
+    "tasks": {
+      "generated": false,
+      "approved": false
+    }
+  },
+  "created_at": "2026-06-03",
+  "updated_at": "2026-06-03T01:00:00Z"
+}
