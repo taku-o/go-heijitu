@@ -38,6 +38,11 @@ jj new
 
 -------------
 
+/kiro-spec-tasks step4-googlecalendar
+/kiro-approve-task step4-googlecalendar
+jj new
+
+
 
 
 
