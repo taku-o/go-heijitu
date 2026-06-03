@@ -11,7 +11,7 @@
 
 - [ ] 2.1 New と認証方式選択の実装
   - `providers/googleCalendar/provider.go` を新規作成する（`package googleCalendar`）。固定 Calendar ID 定数（`ja.japanese.official#holiday@group.v.calendar.google.com`）・`Options`（`APIKey` / `CredentialsFile`）・`Provider`（`service *calendar.Service` を保持）・`New(ctx, opts)` を定義する
-  - `New` の認証分岐: `CredentialsFile` が非空なら `option.WithCredentialsFile` と `option.WithScopes(calendar.CalendarReadonlyScope)` を付与（`APIKey` 併用時も優先）。空かつ `APIKey` 非空なら `option.WithAPIKey`（スコープ指定なし）。両方空なら `calendar.NewService` を呼ばずにエラーを返す（ネットワークアクセスなし）。`NewService` のエラーは握りつぶさず伝播し、成功時に `Provider{service}` を返す
+  - `New` の認証分岐: `CredentialsFile` が非空なら `option.WithAuthCredentialsFile(option.ServiceAccount, opts.CredentialsFile)` と `option.WithScopes(calendar.CalendarReadonlyScope)` を付与（`APIKey` 併用時も優先。deprecated な `WithCredentialsFile` は使わない）。空かつ `APIKey` 非空なら `option.WithAPIKey`（スコープ指定なし）。両方空なら `calendar.NewService` を呼ばずにエラーを返す（ネットワークアクセスなし）。`NewService` のエラーは握りつぶさず伝播し、成功時に `Provider{service}` を返す
   - 観察可能な完了条件: `go build ./providers/googleCalendar/...` がエラーなく通ること
   - _Depends: 1.1_
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 2.1, 3.1, 3.2_
@@ -36,16 +36,17 @@
   - `providers/googleCalendar/provider_test.go` を新規作成する（`package googleCalendar_test`）
   - `New`: `Options{}`（`APIKey`・`CredentialsFile` 両方空）→ エラーが返り、ネットワークアクセスが発生しないこと（要件 1.4）。存在しないパスを `CredentialsFile` に指定 → `calendar.NewService` のファイル読込失敗としてエラーが返ること（ネットワークなし、要件 3.2）
   - `var _ heijitu.HolidayProvider = (*googleCalendar.Provider)(nil)` を置き、3メソッド揃った `Provider` のインターフェース充足をコンパイル時に保証する
+  - 補足: `HolidaysBetween` の `from > to` ガードはネットワーク非依存ロジックだが、外部テストパッケージでは `New` の成功（＝有効な認証情報）なしに `Provider` 実体を構築できないため、その挙動検証はタスク4（integration）で行う（`New` の振る舞いに依存しない単体検証はここでは行わない）
   - 観察可能な完了条件: `go test ./providers/googleCalendar/...`（タグなし）で全テストがパスすること
   - _Depends: 2.3_
   - _Requirements: 1.1, 1.4, 3.2_
   - _Boundary: googleCalendar.Provider (provider_test.go)_
 
 - [ ] 4. (P) 実API取得の integration テスト
-  - `providers/googleCalendar/provider_integration_test.go` を新規作成する。ファイル先頭に `//go:build integration` タグを付与し、通常の `go test ./...` ではビルド対象外にする。APIキーは環境変数等から取得する（与え方はこのテスト内で定める）
+  - `providers/googleCalendar/provider_integration_test.go` を新規作成する。ファイル先頭に `//go:build integration` タグを付与し、通常の `go test ./...` ではビルド対象外にする。APIキーは環境変数 `GOOGLE_CALENDAR_API_KEY` から取得し、未設定なら `t.Skip` でスキップする（認証情報の無い環境でも `go test -tags integration` がエラーにならないようにする）
   - `New`（APIキー認証）→ エラーなくプロバイダーが得られる（要件 1.1, 1.3, 2.1）
   - `IsHoliday`: 既知の祝日（例: 1月1日 元日）→ `true`、平日 → `false`（要件 5.1, 5.2, 4.1, 4.2）。`HolidayName`: 既知の祝日 → 期待する祝日名（文字化けなし）、非祝日 → 空文字（要件 5.3, 5.4）
-  - `HolidaysBetween`: 祝日を含む期間 → 件数が両端含めて正しく、日付昇順で並ぶ。あわせて `from > to` → 空スライスと `nil`（ガードが API 呼び出し前に短絡することの確認）（要件 5.5, 4.4）
+  - `HolidaysBetween`: 祝日を含む期間 → 件数が両端含めて正しく、日付昇順で並ぶ。境界として `from == to`（同一暦日・その日が祝日なら1件/非祝日なら0件）、`from > to` → 空スライスと `nil`（ガードが API 呼び出し前に短絡することの確認）、および境界日付の祝日が UTC クエリ窓で取りこぼされないこと（要件 5.5, 4.4）
   - 観察可能な完了条件: `go test -tags integration ./providers/googleCalendar/...` がパスし、かつ `go test ./providers/googleCalendar/...`（タグなし）ではこのファイルがビルドされない（ネットワーク非依存が保たれる）こと
   - _Depends: 2.3_
   - _Requirements: 1.1, 1.3, 2.1, 2.2, 4.1, 4.2, 4.4, 5.1, 5.2, 5.3, 5.4, 5.5_

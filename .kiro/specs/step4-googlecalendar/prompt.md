@@ -42,7 +42,24 @@ jj new
 /kiro-approve-task step4-googlecalendar
 jj new
 
+-------------
 
+/kiro-review-spec step4-googlecalendar
+
+軽微な問題、注意事項、対応推奨アクションにあげられている項目は修正してください。
+
+この違いはなに？
+WithCredentialsFile か WithAuthCredentialsFile
+
+WithAuthCredentialsFileを採用
+
+軽微な問題、注意事項、対応推奨アクションにあげられている項目は修正してください。
+
+jj new
+!jj-merge feature/step4-googlecalendar
+/commit-commands:commit-push-pr
+
+-------------
 
 
 
