@@ -314,15 +314,15 @@ func New() *Provider
 import "github.com/taku-o/go-heijitu/providers/caoCsv"
 
 type Options struct {
-    CSVPath string // ローカルCSVファイルのパス（優先）
-    CSVURL  string // CSVのURL（CSVPathが空の場合に使用）
+    CSVPath string // ローカルCSVファイルのパス。空の場合は内閣府公式データをオンライン取得する
 }
 
 func New(ctx context.Context, opts Options) (*Provider, error)
 ```
 
-`CSVPath` と `CSVURL` が両方指定された場合は `CSVPath` を優先する。  
-どちらも空の場合はエラーを返す。
+`CSVPath` を指定した場合はそのローカルCSVファイルを読み込む。  
+`CSVPath` が空の場合は内閣府公式の祝日データをオンラインで取得する。  
+CSVの取得・Shift_JISデコード・パースは `github.com/mikan/syukujitsu-go` に委譲する。
 
 ---
 

@@ -1,0 +1,22 @@
+{
+  "feature": "step3-caocsv",
+  "title": "Step 3: caoCsv（内閣府CSV）プロバイダー実装",
+  "language": "ja",
+  "phase": "tasks-generated",
+  "approvals": {
+    "requirements": {
+      "generated": true,
+      "approved": true
+    },
+    "design": {
+      "generated": true,
+      "approved": true
+    },
+    "tasks": {
+      "generated": true,
+      "approved": true
+    }
+  },
+  "created_at": "2026-06-03",
+  "updated_at": "2026-06-03T09:00:00Z"
+}

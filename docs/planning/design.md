@@ -98,24 +98,24 @@ func New() *Provider
 
 ### CAOCSVProvider
 
-内閣府CSVから祝日データを取得・パース。ローカルファイルとURL取得の2モード対応。
+内閣府CSVから祝日データを取得・パース。ローカルファイルとオンライン取得の2モード対応。
 
 ```go
 // providers/caoCsv/provider.go
 type Provider struct {
-    holidays map[string]string // "2006-01-02" → 祝日名
+    entries []syukujitsu.Entry // mikan のパース結果を保持
 }
 
 type Options struct {
-    CSVPath string // ローカルCSVファイルパス（優先）
-    CSVURL  string // CSVのURL（CSVPathが空の場合に使用）
+    CSVPath string // ローカルCSVファイルパス。空の場合は内閣府公式データをオンライン取得する
 }
 
 func New(ctx context.Context, opts Options) (*Provider, error)
 ```
 
-CSVパースに `github.com/mikan/syukujitsu-go` の利用を検討する。  
-Shift_JIS デコードには `golang.org/x/text/encoding/japanese` を使用。
+CSVの取得・パースには `github.com/mikan/syukujitsu-go` を使用する（`CSVPath` 指定時は `LoadAndParse`、空の場合は `FetchAndParse`）。  
+Shift_JIS デコードは同ライブラリが内部で処理するため、`golang.org/x/text` は推移的依存となる。  
+`IsHoliday` / `HolidayName` の点照合は mikan の `Find` に委譲する。`HolidaysBetween` は mikan に範囲APIが無いため、保持した `entries` を自前で範囲フィルタ＋昇順ソートして返す。
 
 ### GoogleCalendarProvider
 
@@ -303,10 +303,8 @@ provider, err := caoCsv.New(ctx, caoCsv.Options{
     CSVPath: "data/syukujitsu.csv",
 })
 
-// URLから取得
-provider, err := caoCsv.New(ctx, caoCsv.Options{
-    CSVURL: "https://www8.cao.go.jp/chosei/shukujitsu/syukujitsu.csv",
-})
+// オンライン取得（CSVPath を空にすると内閣府公式データを取得）
+provider, err := caoCsv.New(ctx, caoCsv.Options{})
 ```
 
 ---
@@ -317,7 +315,7 @@ provider, err := caoCsv.New(ctx, caoCsv.Options{
 |-----------|------|---------|
 | `github.com/holiday-jp/holiday_jp-go` | HolidayJPProvider実装 | holidayjpプロバイダー使用時 |
 | `github.com/mikan/syukujitsu-go` | 内閣府CSVパーサー | caoCsvプロバイダー使用時 |
-| `golang.org/x/text` | Shift_JISデコード | caoCsvプロバイダー使用時 |
+| `golang.org/x/text` | Shift_JISデコード（mikan/syukujitsu-go 経由の推移的依存） | caoCsvプロバイダー使用時 |
 | `google.golang.org/api/calendar/v3` | Google Calendar API | googleCalendarプロバイダー使用時 |
 | `gopkg.in/yaml.v3` | YAML設定ファイル読み込み | 設定ファイル使用時 |
 
@@ -332,7 +330,8 @@ provider, err := caoCsv.New(ctx, caoCsv.Options{
 | モジュール名 | `github.com/taku-o/go-heijitu` |
 | Go バージョン | 1.23 |
 | ライセンス | MIT |
-| CAOCSVプロバイダーのキャッシュ | キャッシュなし。URL取得時は毎回 fetch する |
+| CAOCSVプロバイダーのキャッシュ | キャッシュなし。オンライン取得時は New 呼び出し時に毎回 fetch する |
+| CAOCSVプロバイダーのデータソース | `Options.CSVPath` 指定時はローカル、空時は内閣府公式データをオンライン取得。任意URLの指定は受け付けない |
 | エラーハンドリング | プロバイダーのエラーは呼び出し元に伝播する。内部で握りつぶさない |
 | 振替休日 | 各プロバイダーの実装に委ねる（ライブラリ側では関与しない） |
 | 設定ファイルフォーマット | YAML優先、JSON も対応。拡張子で自動判別 |

@@ -124,17 +124,16 @@ func New() *Provider
 ### providers/caoCsv/provider.go
 
 内閣府CSV（`syukujitsu.csv`）を読み込む `HolidayProvider` 実装。  
-ローカルCSVファイルパスまたはURLを `Options` で指定する。  
-内部で `map[string]string`（"2006-01-02" → 祝日名）にデータを保持。
+ローカルCSVファイルパスを `Options.CSVPath` で指定する。空の場合は内閣府公式データをオンライン取得する。  
+内部で mikan のパース結果（`[]syukujitsu.Entry`）を保持し、点照合は `Find` に委譲する。
 
 ```go
 type Provider struct {
-    holidays map[string]string
+    entries []syukujitsu.Entry
 }
 
 type Options struct {
-    CSVPath string // ローカルファイルパス（優先）
-    CSVURL  string // URL（CSVPathが空の場合に使用）
+    CSVPath string // ローカルファイルパス。空の場合は内閣府公式データをオンライン取得する
 }
 
 func New(ctx context.Context, opts Options) (*Provider, error)
@@ -142,8 +141,8 @@ func New(ctx context.Context, opts Options) (*Provider, error)
 ```
 
 ```
-外部依存: golang.org/x/text（Shift_JISデコード）
-         github.com/mikan/syukujitsu-go（CSVパーサー、利用を検討）
+外部依存: github.com/mikan/syukujitsu-go（CSV取得・パーサー、Shift_JISデコードを内部処理）
+         golang.org/x/text（mikan/syukujitsu-go 経由の推移的依存）
 ```
 
 ### providers/googleCalendar/provider.go
@@ -176,7 +175,7 @@ func New(ctx context.Context, opts Options) (*Provider, error)
 calendar.go
   └── provider.go (interface)
         └── providers/holidayjp/provider.go  ← holiday-jp/holiday_jp-go
-        └── providers/caoCsv/provider.go     ← x/text, (mikan/syukujitsu-go)
+        └── providers/caoCsv/provider.go     ← mikan/syukujitsu-go (→ x/text)
         └── providers/googleCalendar/provider.go ← google.golang.org/api
   └── monthday.go
   └── holiday.go
@@ -201,8 +200,8 @@ go 1.23
 
 require (
     github.com/holiday-jp/holiday_jp-go v0.0.0-...  // holidayjpプロバイダー
-    github.com/mikan/syukujitsu-go v...              // caoCsvプロバイダー
-    golang.org/x/text v...                           // caoCsvプロバイダー（Shift_JISデコード）
+    github.com/mikan/syukujitsu-go v...              // caoCsvプロバイダー（CSV取得・パース・Shift_JISデコード）
+    golang.org/x/text v...                           // mikan/syukujitsu-go 経由の推移的依存
     google.golang.org/api v...                       // googleCalendarプロバイダー
     golang.org/x/oauth2 v...                         // googleCalendarプロバイダー
     gopkg.in/yaml.v3 v...                            // 設定ファイル読み込み
