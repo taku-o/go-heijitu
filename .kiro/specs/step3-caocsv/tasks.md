@@ -58,7 +58,7 @@
   - _Requirements: 1.1, 4.3, 5.5_
   - _Boundary: caoCsv.Provider (provider_test.go)_
 
-- [ ] 4. (P) オンラインモードの integration テスト
+- [x] 4. (P) オンラインモードの integration テスト
   - `providers/caoCsv/provider_integration_test.go` を新規作成する。ファイル先頭に `//go:build integration` タグを付与し、通常の `go test ./...` ではビルド対象外にする
   - `New`: `CSVPath` 空（`Options{}`）で内閣府公式データをオンライン取得 → エラーなくプロバイダーが得られ、既知の祝日（例: 1月1日 元日）を `IsHoliday` が `true` と判定することを確認する
   - 観察可能な完了条件: `go test -tags integration ./providers/caoCsv/...` でテストがパスし、かつ `go test ./providers/caoCsv/...`（タグなし）ではこのファイルがビルドされない（ネットワーク非依存が保たれる）こと
