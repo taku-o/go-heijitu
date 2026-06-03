@@ -32,7 +32,7 @@
   - _Requirements: 4.4, 5.5_
   - _Boundary: googleCalendar.Provider_
 
-- [ ] 3. ネットワーク非依存の契約テスト
+- [x] 3. ネットワーク非依存の契約テスト
   - `providers/googleCalendar/provider_test.go` を新規作成する（`package googleCalendar_test`）
   - `New`: `Options{}`（`APIKey`・`CredentialsFile` 両方空）→ エラーが返り、ネットワークアクセスが発生しないこと（要件 1.4）。存在しないパスを `CredentialsFile` に指定 → `calendar.NewService` のファイル読込失敗としてエラーが返ること（ネットワークなし、要件 3.2）
   - `var _ heijitu.HolidayProvider = (*googleCalendar.Provider)(nil)` を置き、3メソッド揃った `Provider` のインターフェース充足をコンパイル時に保証する
