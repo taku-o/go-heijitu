@@ -94,6 +94,25 @@ jj new
 
 /kiro-review-spec step4-googlecalendar
 
+修正してください
+  1. 【重大】tasks.md タスク2.2 を更新 — 「HolidaysBetween(ctx, t, t) へ委譲し結果の有無/先頭要素の Name
+  を返す」方式に書き換え。
+  2. 【重大】tasks.md タスク2.3 を更新 — 「Date.Compare 昇順にソート」を削除し「API の
+  OrderBy("startTime") 昇順に依拠（明示ソートなし）」へ。あわせて dayStart ヘルパー集約に言及。
+  3. 【軽微・任意】 タスク3 の from > to ガード検証スコープの明記、design.md の dayStart 戻り値型明記。
+
+jj new
+
+-------------
+
+takt --task "/kiro-impl step4-googlecalendar 3
+必要ならテストを修正して良い。"
+
+/kiro-review-feature step4-googlecalendar 3
+jj new
+
+
+
 
 
 
