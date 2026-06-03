@@ -1,8 +1,8 @@
 # Implementation Plan
 
-- [ ] 1. Foundation — Google Calendar API 依存の追加
+- [x] 1. Foundation — Google Calendar API 依存の追加
 
-- [ ] 1.1 google.golang.org/api 依存の追加
+- [x] 1.1 google.golang.org/api 依存の追加
   - `go get google.golang.org/api/calendar/v3` を実行し `go.mod` / `go.sum` を更新する（`google.golang.org/api/option` も同梱され、`golang.org/x/oauth2` は推移的依存として `// indirect` で取り込まれる）。取得後 `go mod tidy` を実行する
   - 補足: 本依存は要件4・要件5（Calendar API からの祝日取得と HolidayProvider 実装）の前提となるが、本タスクの成果物は依存の追加とビルド成立のみであり、振る舞い検証は後続タスクで行う
   - 観察可能な完了条件: `go build ./...` がエラーなく通り、`go.mod` の `require` に `google.golang.org/api` が追加されていること

@@ -74,7 +74,30 @@ APIキーや認証は必要？
   5. 使うとき: export GOOGLE_CALENDAR_API_KEY=（取得した鍵） → go test -tags integration
   ./providers/googleCalendar/...
 
+jj new
+
 -------------
+
+takt --task "/kiro-impl step4-googlecalendar 1
+必要ならテストを修正して良い。"
+
+/kiro-review-feature step4-googlecalendar 1
+jj new
+
+
+
+
+
+
+
+
+APIキーの取得方法については、ドキュメントに記載したい
+  1. Google Cloud Console でプロジェクトを作成（または既存を選択）
+  2. 「APIとサービス」→「ライブラリ」で Google Calendar API を有効化
+  3. 「APIとサービス」→「認証情報」→「認証情報を作成」→「APIキー」
+  4. 作成された鍵を、推奨として Calendar API のみに制限（キーの制限 → API制限）
+  5. 使うとき: export GOOGLE_CALENDAR_API_KEY=（取得した鍵） → go test -tags integration
+  ./providers/googleCalendar/...
 
 
 
