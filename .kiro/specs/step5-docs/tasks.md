@@ -1,8 +1,8 @@
 # Implementation Plan
 
-- [ ] 1. Foundation — example 補助ファイルの準備
+- [x] 1. Foundation — example 補助ファイルの準備
 
-- [ ] 1.1 example 用の設定ファイルと caoCsv ローカル用CSVを用意
+- [x] 1.1 example 用の設定ファイルと caoCsv ローカル用CSVを用意
   - `WithConfig` 用の設定ファイルを example 配下に作成する（`excluded_dates` を含む YAML）。後続 2.1 の `WithConfig` 併用例がこのファイルを参照する
   - caoCsv ローカルモード用CSVを、既存 `providers/caoCsv/testdata/syukujitsu_test.csv` の内容を流用して example 配下に作成する（内閣府CSV形式・Shift_JIS を保持し、`syukujitsu.LoadAndParse` のパース成功を保証）。後続 2.1 の caoCsv ローカルモード例がこのファイルを参照する
   - 観察可能な完了条件: 設定ファイルと Shift_JIS CSV が example 配下に存在し、リポジトリルートからの相対パスで参照でき、CSV が既存テストデータと同一フォーマットであること

@@ -1,0 +1,11 @@
+excluded_dates:
+  - month: 12
+    day: 29
+  - month: 12
+    day: 30
+  - month: 12
+    day: 31
+  - month: 1
+    day: 2
+  - month: 1
+    day: 3
