@@ -98,7 +98,7 @@
    - caoCsv ローカルモード用の Shift_JIS テストCSV を用意（既存 `providers/caoCsv/testdata/` の再利用可否を設計で判断）。
    - caoCsv オンライン（URL）モードと googleCalendar（鍵ガード）の**ネットワーク非依存環境での実行挙動**（スキップ/エラーハンドリング）を設計で確定（要件: 鍵未設定で `go run` が正常終了）。
 4. **ドキュメントの目次・粒度**: docs/en|ja の各ファイルの章立て。元資料 `docs/planning/api-spec.md` を基に実コードへ整合。
-5. **LICENSE / CHANGELOG の具体値**: ライセンス著作権者・年（MIT、`taku-o` / 2026 想定だが確認）、CHANGELOG の初版バージョン表記。
+5. **LICENSE / CHANGELOG の具体値**: ライセンスは MIT・著作権者 `taku-o`・年 `2026` で確定。CHANGELOG の初版バージョン表記は実装時に記載。
 6. **多言語対応の担保方法**: en/ja の内容対応をどう維持・検証するか（章構成を揃える等）。
 7. **APIキー取得手順の記載内容**: ユーザー提示の5手順（Cloud Console プロジェクト作成→Calendar API 有効化→APIキー作成→Calendar API のみへ制限→`export GOOGLE_CALENDAR_API_KEY` で integration テスト）をプロバイダーガイド(en/ja)に詳細、README(en/ja)に要点リンク。
 
@@ -123,4 +123,4 @@
 ### 4. 確定した設計判断
 - 公開 `Config` 型は存在しないため、API仕様・GoDoc 対象から除外し、設定は「設定ファイル仕様（`excluded_dates`）」として文書化（要件2修正済みと整合）。
 - example はリポジトリルートからの `go run example/main.go` を前提に補助ファイルを相対参照。
-- LICENSE 著作権者・年（MIT / taku-o / 2026 想定）と CHANGELOG 初版表記は実装時に最終確定。
+- LICENSE は MIT・著作権者 taku-o・年 2026 で確定。CHANGELOG 初版表記は実装時に記載。

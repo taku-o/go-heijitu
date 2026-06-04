@@ -133,6 +133,6 @@
 1. When `go test ./...`（integration タグなし）が実行される, the ライブラリ shall すべてのテストをパスする.
 2. When `go vet ./...` が実行される, the ライブラリ shall 警告・エラーを出さない.
 3. When `go build ./...` が実行される, the ライブラリ shall エラーなくビルドされる.
-4. The 多言語ドキュメント（README・api-spec・usage・providers） shall 英語版と日本語版で内容が対応している.
+4. The 多言語ドキュメント（README・api-spec・usage・providers） shall 英語版と日本語版で見出し構成（章・節）が一致し、かつ対応するコード例のセットが一致していること（「内容が対応」はこの2基準で判定する）.
 
 > **補足（受け入れ基準ではない）**: 本ステップは Step 1〜4 の実装完了を前提とする。example の caoCsv オンライン取得モードと googleCalendar 使用例（`GOOGLE_CALENDAR_API_KEY` 設定時）はネットワーク接続を要する。認証情報の発行・管理は利用者の責任であり、本ステップはその取得手順を文書化するのみで認証情報を同梱しない。

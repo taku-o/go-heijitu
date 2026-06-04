@@ -248,13 +248,13 @@ graph TB
 
 **Responsibilities & Constraints**
 - **README（en/ja）**: 概要・インストール（`go get github.com/taku-o/go-heijitu`）・クイックスタート（holidayjp での最小例）・プロバイダー要約・docs へのリンク・googleCalendar APIキー取得の要点とプロバイダーガイドへのリンク・MIT ライセンス記載・相互言語リンク。
-- **LICENSE**: MIT 本文（著作権者・年は実装時に確定。product.md の MIT 準拠）。
+- **LICENSE**: MIT 本文（著作権者: `taku-o`、年: `2026`。product.md の MIT 準拠）。
 - **CHANGELOG.md**（en）: バージョン履歴（初版エントリ）。
 - **CONTRIBUTING.md**（en）: ビルド・テスト（`go test ./...`）・integration テスト（`go test -tags integration ...`）・`go vet`・`gofmt` の手順を含む貢献方法。
 - **docs/{en,ja}/api-spec.md**: 公開型（`MonthDay`・`Holiday`・`HolidayProvider`・`BusinessCalendar`・各プロバイダー `Provider`/`Options`）・公開API シグネチャ・**設定ファイル仕様（`excluded_dates` の YAML/JSON）**。公開 `Config` 型は存在しないため記載しない（実シグネチャ整合、要件 5.3）。
 - **docs/{en,ja}/usage.md**: インストール〜ユースケース別（営業日判定・次の営業日・月初/年間営業日・祝日一覧・除外日付のパラメータ/設定ファイル指定・呼び出し限定の extraExcluded・プロバイダー切替）。
 - **docs/{en,ja}/providers.md**: 3プロバイダーの選択基準（データソース・ネットワーク要否・認証・オフライン可否）・設定方法・注意点（googleCalendar の lazy query コスト、caoCsv URL のネットワーク依存）・**googleCalendar APIキー取得手順**（Google Cloud Console でのプロジェクト作成→Calendar API 有効化→APIキー作成→Calendar API のみへの制限推奨）・**integration テスト実行手順**（`export GOOGLE_CALENDAR_API_KEY=<鍵>` → `go test -tags integration ./providers/googleCalendar/...`）。
-- 多言語: en と ja は**同一の章構成**とし、内容を対応させる（要件 8.4）。
+- 多言語: en と ja は**見出し構成（章・節）を一致**させ、かつ**対応するコード例のセットを一致**させる。この2基準で「内容の対応」を判定する（要件 8.4）。
 
 **Implementation Notes**
 - Integration: 元資料 `docs/planning/api-spec.md` 等を参考にしつつ、**実コードの公開シグネチャに整合**させる（planning の公開 `Config` 記載は引き継がない）。
@@ -273,7 +273,7 @@ graph TB
 - **テスト**: `go test ./...`（integration タグなし）が全パッケージで pass（要件 8.1、回帰なし）。
 - **example 実行**: `GOOGLE_CALENDAR_API_KEY` 未設定環境で `go run example/main.go` が正常終了し、holidayjp/設定/extraExcluded/caoCsv ローカルの出力が得られる（要件 1.8）。`GOOGLE_CALENDAR_API_KEY` 設定時は googleCalendar 部分も実行される（要件 1.6）。
 - **GoDoc 表示**: `go doc github.com/taku-o/go-heijitu` でパッケージ概要が表示され、`go doc <symbol>` で各公開シンボルのコメントが表示される（要件 2.4）。
-- **ドキュメント整合**: docs/en と docs/ja の章構成が対応し、api-spec の記載シグネチャが実コードと一致する（要件 5.3/8.4）。README en/ja が相互リンクと APIキー要点リンクを持つ（要件 3.3/3.4）。
+- **ドキュメント整合**: docs/en と docs/ja で見出し構成（章・節）が一致し、対応するコード例のセットが一致する（要件 8.4）。api-spec の記載シグネチャが実コードと一致する（要件 5.3）。README en/ja が相互リンクと APIキー要点リンクを持つ（要件 3.3/3.4）。
 
 ## Security Considerations
 - example・ドキュメントに APIキーや認証情報をハードコードしない。googleCalendar は `GOOGLE_CALENDAR_API_KEY` 環境変数から取得する例のみを示す。

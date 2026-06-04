@@ -54,7 +54,7 @@
   - _Boundary: README_
 
 - [ ] 2.7 (P) リポジトリルートドキュメント（LICENSE・CHANGELOG・CONTRIBUTING）
-  - `LICENSE`（MIT 本文）・`CHANGELOG.md`（バージョン履歴・初版エントリ、英語）・`CONTRIBUTING.md`（ビルド・`go test ./...`・`go test -tags integration ...`・`go vet`・`gofmt` を含む貢献手順、英語）を作成する
+  - `LICENSE`（MIT 本文・著作権者 `taku-o`・年 `2026`）・`CHANGELOG.md`（バージョン履歴・初版エントリ、英語）・`CONTRIBUTING.md`（ビルド・`go test ./...`・`go test -tags integration ...`・`go vet`・`gofmt` を含む貢献手順、英語）を作成する
   - 観察可能な完了条件: `LICENSE`・`CHANGELOG.md`・`CONTRIBUTING.md` が存在し、CONTRIBUTING にテスト実行手順が含まれること
   - _Requirements: 4.1, 4.2, 4.3_
   - _Boundary: root docs_
@@ -65,7 +65,7 @@
   - `go build ./...` / `go vet ./...` / `go test ./...`（integration タグなし）が全てエラー0件であることを確認する
   - `GOOGLE_CALENDAR_API_KEY` 未設定で `go run example/main.go` が正常終了し、期待した出力が得られることを確認する
   - `go doc` でパッケージ概要・公開シンボルコメントが表示されることを確認する
-  - docs の英語版と日本語版で章構成が対応していること、api-spec の記載シグネチャが実コードと一致することを確認する
-  - 観察可能な完了条件: 上記コマンドが全てエラー0件で、docs の en/ja 章構成対応・README 相互リンクが確認できること
+  - docs の英語版と日本語版で見出し構成（章・節）が一致し対応するコード例のセットが一致していること、api-spec の記載シグネチャが実コードと一致することを確認する
+  - 観察可能な完了条件: 上記コマンドが全てエラー0件で、docs の en/ja の見出し構成一致・対応コード例セット一致・README 相互リンクが確認できること
   - _Depends: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7_
   - _Requirements: 8.1, 8.2, 8.3, 8.4_
