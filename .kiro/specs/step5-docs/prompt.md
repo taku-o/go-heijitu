@@ -55,11 +55,31 @@ jj new
 /kiro-approve-task step5-docs
 jj new
 
+-------------
+
+/kiro-review-spec step5-docs
+
+こちら対応してください。
+  1. 【推奨・軽微】tasks.md 2.2 の表現を確定的に:
+  「不足があれば補正」→「全公開シンボルを点検し、コメントが無い/Go Doc
+  慣習違反のものを補い、結果として全公開シンボルがコメントを持つ状態にする」へ。曖昧表現5件を一括解消。
+  2. （任意）design.md に「ルートは単一パッケージ heijitu＝複数ファイル、doc.go
+  が概要を担当」の一文を補足。
+
+軽微な問題、注意事項、対応推奨アクションにあげられている項目は修正してください。
+
+jj new
+!jj-merge feature/step5-docs
+/commit-commands:commit-push-pr
+
+/review 6
 
 
 
 
-
+  - docs/planning/api-spec.md・design.md が公開 Config 型で陳腐化していますが、これらは Out of
+  Boundary（改変しない） と明示済みで、新 docs/en|ja/api-spec.md
+  が実コード準拠で正確に作成されるためタスク漏れはありません。README は 2.6 で改訂タスクあり。
 
 
 

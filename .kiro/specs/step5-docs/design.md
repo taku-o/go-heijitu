@@ -230,7 +230,8 @@ graph TB
 | Requirements | 2.1, 2.2, 2.3, 2.4 |
 
 **Responsibilities & Constraints**
-- ルートパッケージ `heijitu` に `doc.go`（`// Package heijitu ...`）を追加し、ライブラリ概要・プロバイダー注入の考え方を記述。
+- 対象は4パッケージ: ルートの単一パッケージ `heijitu`（`calendar.go`・`monthday.go`・`holiday.go`・`option.go`・`config.go`・`provider.go` の複数ファイルで構成される1パッケージ）と、`providers/holidayjp`・`providers/caoCsv`・`providers/googleCalendar`。
+- ルートパッケージ `heijitu` に `doc.go`（`// Package heijitu ...`）を追加し、ライブラリ概要・プロバイダー注入の考え方を記述する（`doc.go` がパッケージ概要を担当。`monthday.go` 等の各ファイルのシンボルコメントは同じ `heijitu` パッケージの点検対象に含む）。
 - `providers/holidayjp`・`providers/caoCsv`・`providers/googleCalendar` の各 `provider.go` 先頭に `// Package <name> ...` を追加。
 - 既存の型/関数/メソッドコメントを点検し、不足や `gofmt`/Go Doc 慣習（対象シンボル名で始まる）違反があれば補正する（**コメントのみ**）。
 

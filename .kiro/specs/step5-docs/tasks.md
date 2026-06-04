@@ -21,9 +21,9 @@
   - _Boundary: example program_
 
 - [ ] 2.2 (P) GoDoc パッケージコメントの追加と公開シンボルの点検
-  - ルートパッケージにパッケージ doc コメント（ライブラリ概要）を追加し、3プロバイダーパッケージ（holidayjp / caoCsv / googleCalendar）に各パッケージコメントを追加する（コメントのみ。宣言・シグネチャ・import は変更しない）
-  - 全公開型・公開関数・公開メソッドのコメントを点検し、不足や Go Doc 慣習（対象シンボル名で始まる）違反があれば補正する
-  - 観察可能な完了条件: `go doc github.com/taku-o/go-heijitu` と `go doc ./providers/...` でパッケージ概要が表示され、各公開シンボルにコメントが表示されること。`go build ./...` / `go vet ./...` がエラーなし
+  - ルートパッケージ（単一パッケージ `heijitu`。複数ファイルで構成）にパッケージ doc コメント（ライブラリ概要）を追加し、3プロバイダーパッケージ（holidayjp / caoCsv / googleCalendar）に各パッケージコメントを追加する（コメントのみ。宣言・シグネチャ・import は変更しない）
+  - 全公開型・公開関数・公開メソッドを点検し、コメントが無いもの／Go Doc 慣習（対象シンボル名で始まる）違反のものを補い、結果として全公開シンボルがコメントを持つ状態にする
+  - 観察可能な完了条件: `go doc github.com/taku-o/go-heijitu` と `go doc ./providers/...` でパッケージ概要が表示され、全公開シンボルにコメントが表示されること。`go build ./...` / `go vet ./...` がエラーなし
   - _Requirements: 2.1, 2.2, 2.3, 2.4_
   - _Boundary: GoDoc comments_
 
