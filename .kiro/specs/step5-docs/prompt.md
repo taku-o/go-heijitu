@@ -44,6 +44,20 @@ jj new
 
 -------------
 
+/kiro-spec-design step5-docs
+/kiro-validate-design step5-docs
+/kiro-approve-design step5-docs
+jj new
+
+-------------
+
+/kiro-spec-tasks step4-googlecalendar
+
+
+
+
+/kiro-approve-task step4-googlecalendar
+jj new
 
 
 

@@ -101,3 +101,26 @@
 5. **LICENSE / CHANGELOG の具体値**: ライセンス著作権者・年（MIT、`taku-o` / 2026 想定だが確認）、CHANGELOG の初版バージョン表記。
 6. **多言語対応の担保方法**: en/ja の内容対応をどう維持・検証するか（章構成を揃える等）。
 7. **APIキー取得手順の記載内容**: ユーザー提示の5手順（Cloud Console プロジェクト作成→Calendar API 有効化→APIキー作成→Calendar API のみへ制限→`export GOOGLE_CALENDAR_API_KEY` で integration テスト）をプロバイダーガイド(en/ja)に詳細、README(en/ja)に要点リンク。
+
+---
+
+## 設計フェーズ Synthesis（design.md 作成時）
+
+### 1. Generalization（一般化）
+- README/API仕様/使い方/プロバイダーガイドはすべて「**実コードの公開シグネチャを唯一の真実とする**」という共通問題の変種。各ドキュメントは元資料 `docs/planning/` ではなく実コードを参照源とする方針で統一。
+- en/ja は同一章構成のミラーとして扱い、内容対応を構造で担保する（個別最適化しない）。
+
+### 2. Build vs. Adopt（採用判断）
+- **採用**: ドキュメント本文の素材は既存 `docs/planning/`（api-spec/design/structure/usage 相当情報）を流用。ただし陳腐化箇所（公開 `Config` 型など）は実コードに合わせて補正。
+- **採用**: LICENSE は標準 MIT 本文を採用（独自ライセンス文を作らない）。
+- **新規作成**: example・docs/en|ja・README 本文・CHANGELOG/CONTRIBUTING はコードに整合する新規作成。
+
+### 3. Simplification（簡素化）
+- パッケージ doc コメントはルートのみ独立 `doc.go`、プロバイダーは既存 `provider.go` 先頭に1行付与（新ファイルを増やしすぎない）。
+- example は1ファイル `main.go` に集約し、補助は最小限（設定1ファイル＋最小CSV）。仮想的な将来用途のドキュメント・サンプルは作らない（YAGNI）。
+- example のネットワーク/認証依存部はガード＋ログ継続で `go run` の常時正常終了を担保（追加の抽象化やフォールバック機構は導入しない）。
+
+### 4. 確定した設計判断
+- 公開 `Config` 型は存在しないため、API仕様・GoDoc 対象から除外し、設定は「設定ファイル仕様（`excluded_dates`）」として文書化（要件2修正済みと整合）。
+- example はリポジトリルートからの `go run example/main.go` を前提に補助ファイルを相対参照。
+- LICENSE 著作権者・年（MIT / taku-o / 2026 想定）と CHANGELOG 初版表記は実装時に最終確定。
