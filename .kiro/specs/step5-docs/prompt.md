@@ -51,12 +51,8 @@ jj new
 
 -------------
 
-/kiro-spec-tasks step4-googlecalendar
-
-
-
-
-/kiro-approve-task step4-googlecalendar
+/kiro-spec-tasks step5-docs
+/kiro-approve-task step5-docs
 jj new
 
 
