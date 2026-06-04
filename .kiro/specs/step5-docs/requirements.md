@@ -18,10 +18,11 @@
   - `docs/en/api-spec.md`・`docs/ja/api-spec.md`（API仕様、英語/日本語）
   - `docs/en/usage.md`・`docs/ja/usage.md`（使い方ガイド、英語/日本語）
   - `docs/en/providers.md`・`docs/ja/providers.md`（プロバイダーガイド、英語/日本語。googleCalendar の APIキー取得手順・integration テスト実行手順を含む）
+  - Step 5 完了後の `docs/planning/` 配下の計画資料のアーカイブ移動（`.kiro/specs/initial-planning/planning/` へ。内容は不変）と、移動後の `docs/planning/` ディレクトリ削除
 - **Out of scope**:
   - ライブラリの新しい機能・API・型の追加、既存の振る舞いの変更（GoDoc コメント追加を除く）
   - プロバイダー実装（holidayjp / caoCsv / googleCalendar）のロジック変更
-  - `docs/planning/` 配下の既存計画資料の改変
+  - `docs/planning/` 配下の既存計画資料の**内容の改変（編集）**（アーカイブ移動・削除は In scope。ファイル内容は書き換えない）
   - pkg.go.dev への公開作業・バージョンタグ付け・リリース手続き・CI/CD 構築
   - 新しい祝日プロバイダーの追加
 - **Adjacent expectations**:
@@ -134,5 +135,17 @@
 2. When `go vet ./...` が実行される, the ライブラリ shall 警告・エラーを出さない.
 3. When `go build ./...` が実行される, the ライブラリ shall エラーなくビルドされる.
 4. The 多言語ドキュメント（README・api-spec・usage・providers） shall 英語版と日本語版で見出し構成（章・節）が一致し、かつ対応するコード例のセットが一致していること（「内容が対応」はこの2基準で判定する）.
+
+---
+
+### Requirement 9: 計画資料のアーカイブ
+
+**Objective:** As a メンテナー, I want Step 5 のドキュメント整備完了後に不要となる `docs/planning/` の計画資料をアーカイブ場所へ移動したい, so that 公開ドキュメント（`docs/en`・`docs/ja`）と計画段階の資料が混在せず、リポジトリのドキュメント構成が整理される
+
+#### Acceptance Criteria
+
+1. When Step 5 のドキュメント整備タスク（要件1〜8）が完了した後, the メンテナー shall `.kiro/specs/initial-planning/planning/` ディレクトリを作成し、`docs/planning/` 配下の全ファイルをそこへ移動する.
+2. When 移動が完了した後, the メンテナー shall `docs/planning/` ディレクトリを削除する.
+3. While 移動を行う間, the メンテナー shall 各ファイルの内容を改変せず、移動のみを行う.
 
 > **補足（受け入れ基準ではない）**: 本ステップは Step 1〜4 の実装完了を前提とする。example の caoCsv オンライン取得モードと googleCalendar 使用例（`GOOGLE_CALENDAR_API_KEY` 設定時）はネットワーク接続を要する。認証情報の発行・管理は利用者の責任であり、本ステップはその取得手順を文書化するのみで認証情報を同梱しない。

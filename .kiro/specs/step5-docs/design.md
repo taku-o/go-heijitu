@@ -35,12 +35,13 @@
 - `README.md`（en）・`README-ja.md`（ja）
 - `LICENSE`（MIT）・`CHANGELOG.md`（en）・`CONTRIBUTING.md`（en）
 - `docs/en/` および `docs/ja/` 配下の `api-spec.md`・`usage.md`・`providers.md`
+- Step 5 完了後の `docs/planning/` 配下の計画資料のアーカイブ移動（`.kiro/specs/initial-planning/planning/` へ。内容は不変）と、移動後の `docs/planning/` ディレクトリ削除
 
 ### Out of Boundary
 - ライブラリの公開API・型・振る舞いの変更（GoDoc コメント追加を除く）
 - プロバイダー実装（holidayjp / caoCsv / googleCalendar）のロジック
 - コア（`calendar.go` 等）の判定ロジック
-- `docs/planning/` の既存計画資料
+- `docs/planning/` 既存計画資料の**内容の改変（編集）**（アーカイブ移動・元ディレクトリ削除は This Spec Owns。ファイル内容は書き換えない）
 - pkg.go.dev 公開・リリースタグ・CI 構築
 
 ### Allowed Dependencies
@@ -140,7 +141,13 @@ go-heijitu/
 - `providers/holidayjp/provider.go` / `providers/caoCsv/provider.go` / `providers/googleCalendar/provider.go` — 各先頭に `// Package <name> ...` のパッケージ doc コメントを追加（**コメントのみ。コードは変更しない**）。
 - 既存の公開シンボルでコメントが不足しているものがあれば補う（点検対象）。
 
+### Moved / Removed Files（Step 5 完了後のアーカイブ）
+- `docs/planning/api-spec.md`・`design.md`・`structure.md`・`investigation.md`・`workplan.md` — `.kiro/specs/initial-planning/planning/` へ**内容を改変せず移動**（要件 9.1/9.3）。
+- `docs/planning/`（ディレクトリ） — 移動後に削除（要件 9.2）。
+- 移動先 `.kiro/specs/initial-planning/planning/` は新規作成。
+
 > パッケージ doc コメントは、ルートパッケージは独立した `doc.go` に、プロバイダーパッケージは既存 `provider.go` の先頭に置く（小規模なため新ファイルを増やさない）。
+> アーカイブ移動は全ドキュメント整備（要件1〜8）の検証完了後に実施する。docs 作成タスクは移動前の `docs/planning/` を元資料として参照でき、移動は最後に行うため参照に影響しない。
 
 ## System Flows
 
@@ -183,6 +190,7 @@ graph TB
 | 6.1–6.2 | 使い方ガイド（en/ja） | `docs/en/usage.md`・`docs/ja/usage.md` | — |
 | 7.1–7.4 | プロバイダーガイド（en/ja）＋APIキー取得＋integrationテスト手順 | `docs/en/providers.md`・`docs/ja/providers.md` | — |
 | 8.1–8.4 | 整備後の build/test/vet 成功・多言語対応 | 全成果物・品質ゲート | — |
+| 9.1–9.3 | Step 5 完了後の計画資料アーカイブ（移動＋元ディレクトリ削除、内容不変） | `docs/planning/*` → `.kiro/specs/initial-planning/planning/`、`docs/planning/` 削除 | — |
 
 ## Components and Interfaces
 

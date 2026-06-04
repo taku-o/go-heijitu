@@ -84,19 +84,12 @@ MIT / taku-o / 2026 で良い
 
 /commit
 
-tasks.mdにタスクを追加したい。
-docs/planningのファイル
+tasks.mdの最後にタスクを追加したい。
+docs/planningのファイルは、今回の全てのタスクが完了したら、不要ファイルとなりますよね？
+.kiro/specs/initial-planning/planning を作成して、そこにファイルを移動するタスクを追加してください。
+ファイル移動後、docs/planningディレクトリは削除。
 
-
-
-
-
-
-
-
-  - docs/planning/api-spec.md・design.md が公開 Config 型で陳腐化していますが、これらは Out of
-  Boundary（改変しない） と明示済みで、新 docs/en|ja/api-spec.md
-  が実コード準拠で正確に作成されるためタスク漏れはありません。README は 2.6 で改訂タスクあり。
+/kiro-review-spec step5-docs
 
 
 

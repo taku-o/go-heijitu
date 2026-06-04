@@ -69,3 +69,14 @@
   - 観察可能な完了条件: 上記コマンドが全てエラー0件で、docs の en/ja の見出し構成一致・対応コード例セット一致・README 相互リンクが確認できること
   - _Depends: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7_
   - _Requirements: 8.1, 8.2, 8.3, 8.4_
+
+- [ ] 4. Cleanup — 計画資料のアーカイブ
+
+- [ ] 4.1 docs/planning をアーカイブ場所へ移動し元ディレクトリを削除
+  - `.kiro/specs/initial-planning/planning/` ディレクトリを作成し、`docs/planning/` 配下の全ファイル（`api-spec.md`・`design.md`・`structure.md`・`investigation.md`・`workplan.md`）を内容を改変せずそこへ移動する
+  - 移動後、`docs/planning/` ディレクトリを削除する
+  - 全ドキュメント整備・検証（タスク3.1）の後に実施し、docs 作成で `docs/planning/` を元資料として参照し終えてから移動する
+  - 観察可能な完了条件: `docs/planning/` が存在せず、`.kiro/specs/initial-planning/planning/` に元の全ファイルが内容そのままで存在すること。`go build ./...` / `go test ./...`（タグなし）がエラー0件のままであること
+  - _Depends: 3.1_
+  - _Requirements: 9.1, 9.2, 9.3_
+  - _Boundary: planning archive_
