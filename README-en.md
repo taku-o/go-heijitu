@@ -28,8 +28,13 @@ func main() {
     ctx := context.Background()
     cal := heijitu.New(holidayjp.New())
 
-    ok, _ := cal.IsBusinessDay(ctx, time.Now())
-    fmt.Println("today is a business day:", ok)
+    // Get the first business day of next month
+    next := time.Now().AddDate(0, 1, 0)
+    day, _ := cal.FirstBusinessDayOfMonth(ctx, next.Year(), next.Month())
+
+    weekdays := []string{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}
+    fmt.Printf("First business day of next month: %s (%s)\n",
+        day.Format("2006-01-02"), weekdays[day.Weekday()])
 }
 ```
 
