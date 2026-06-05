@@ -1,16 +1,16 @@
 # go-heijitu
 
-[日本語](./README-ja.md)
+[English](./README-en.md)
 
-`go-heijitu` is a Go library for calculating Japanese business days. It judges whether a day is a business day (not a weekend, holiday, or excluded date) and finds the next business day, the first business day of a month or year, and the holidays in a period. The holiday data source is pluggable through the `HolidayProvider` interface.
+`go-heijitu` は日本の営業日を計算する Go ライブラリです。指定日が営業日か（土日・祝日・除外日付でないか）を判定し、次の営業日・指定年月の最初の営業日・指定年の各月初営業日・期間内の祝日一覧を求めます。祝日データソースは `HolidayProvider` インターフェースで差し替え可能です。
 
-## Installation
+## インストール
 
 ```bash
 go get github.com/taku-o/go-heijitu
 ```
 
-## Quick start
+## クイックスタート
 
 ```go
 package main
@@ -29,26 +29,26 @@ func main() {
     cal := heijitu.New(holidayjp.New())
 
     ok, _ := cal.IsBusinessDay(ctx, time.Now())
-    fmt.Println("today is a business day:", ok)
+    fmt.Println("今日は営業日:", ok)
 }
 ```
 
-## Providers
+## プロバイダー
 
-The holiday data source is selected by passing a `HolidayProvider` to `heijitu.New`:
+祝日データソースは `heijitu.New` に `HolidayProvider` を渡して選択します。
 
-- **holidayjp** — embedded holiday data; no network access.
-- **caoCsv** — Cabinet Office official CSV; local file or online.
-- **googleCalendar** — Google Calendar holiday calendar; API key or service account.
+- **holidayjp** — 埋め込み祝日データ。ネットワークアクセス不要。
+- **caoCsv** — 内閣府公式CSV。ローカルファイル／オンライン。
+- **googleCalendar** — Google Calendar の祝日カレンダー。APIキー／サービスアカウント。
 
-The `googleCalendar` provider requires a Google Calendar API key. In short: create a project in the Google Cloud Console, enable the Google Calendar API, create an API key under **APIs & Services → Credentials**, and (recommended) restrict the key to the Calendar API only. See the [provider guide](./docs/en/providers.md#obtaining-a-google-calendar-api-key) for the full steps and for running the integration tests.
+`googleCalendar` プロバイダーには Google Calendar APIキーが必要です。要点: Google Cloud Console でプロジェクトを作成し、Google Calendar API を有効化、「**APIとサービス → 認証情報**」でAPIキーを作成し、（推奨）キーを Calendar API のみに制限します。詳細な手順と integration テストの実行方法は[プロバイダーガイド](./docs/ja/providers.md#google-calendar-apiキーの取得手順)を参照してください。
 
-## Documentation
+## ドキュメント
 
-- [API specification](./docs/en/api-spec.md)
-- [Usage guide](./docs/en/usage.md)
-- [Provider guide](./docs/en/providers.md)
+- [API仕様](./docs/ja/api-spec.md)
+- [使い方ガイド](./docs/ja/usage.md)
+- [プロバイダーガイド](./docs/ja/providers.md)
 
-## License
+## ライセンス
 
-MIT License. See [LICENSE](./LICENSE).
+MIT ライセンス。[LICENSE](./LICENSE) を参照してください。
