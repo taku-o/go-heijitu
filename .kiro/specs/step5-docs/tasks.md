@@ -10,7 +10,7 @@
 
 - [ ] 2. Core — example・GoDoc・各ドキュメントの作成
 
-- [ ] 2.1 (P) サンプルプログラムの実装
+- [x] 2.1 (P) サンプルプログラムの実装
   - holidayjp プロバイダーで、営業日判定・次の営業日・指定月の最初の営業日・指定年の各月初営業日・期間の祝日一覧を呼び出し、結果を標準出力に表示する
   - `WithExcludedDates` と `WithConfig`（1.1 の設定ファイル）を併用した構築例、および `IsBusinessDay` に呼び出し限定の追加除外日付を渡す例を表示する
   - caoCsv をローカルCSV（1.1 のCSV）・オンラインURL の両モードで生成する例を示し、googleCalendar は `GOOGLE_CALENDAR_API_KEY` 設定時のみ実行し未設定時はスキップを表示する

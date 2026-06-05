@@ -103,6 +103,17 @@ jj new
 
 -------------
 
+takt --task "/kiro-impl step5-docs 2.1
+必要ならテストを修正して良い。"
+
+/kiro-review-feature step5-docs 2.1
+jj new
+
+-------------
+
+/kiro-impl step5-docs 2
+/kiro-review-feature step5-docs 2
+jj new
 
 
 
