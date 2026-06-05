@@ -59,7 +59,7 @@
   - _Requirements: 4.1, 4.2, 4.3_
   - _Boundary: root docs_
 
-- [ ] 3. Validation — 整備後の全体検証
+- [x] 3. Validation — 整備後の全体検証
 
 - [ ] 3.1 整備後の品質ゲートと多言語整合の確認
   - `go build ./...` / `go vet ./...` / `go test ./...`（integration タグなし）が全てエラー0件であることを確認する
