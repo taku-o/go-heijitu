@@ -28,8 +28,13 @@ func main() {
     ctx := context.Background()
     cal := heijitu.New(holidayjp.New())
 
-    ok, _ := cal.IsBusinessDay(ctx, time.Now())
-    fmt.Println("今日は営業日:", ok)
+    // 翌月の最初の営業日を取得する
+    next := time.Now().AddDate(0, 1, 0)
+    day, _ := cal.FirstBusinessDayOfMonth(ctx, next.Year(), next.Month())
+
+    weekdays := []string{"日", "月", "火", "水", "木", "金", "土"}
+    fmt.Printf("翌月の最初の営業日: %s (%s)\n",
+        day.Format("2006-01-02"), weekdays[day.Weekday()])
 }
 ```
 
