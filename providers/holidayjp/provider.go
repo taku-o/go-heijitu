@@ -1,3 +1,5 @@
+// Package holidayjp は holiday-jp/holiday_jp-go の埋め込み祝日データを用いた
+// heijitu.HolidayProvider 実装を提供する。外部ネットワーク接続は不要。
 package holidayjp
 
 import (

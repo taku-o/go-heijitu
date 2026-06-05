@@ -1,3 +1,6 @@
+// Package caoCsv は内閣府が公開する祝日CSVを祝日データソースとする
+// heijitu.HolidayProvider 実装を提供する。ローカルCSVファイルの読み込みと
+// オンライン取得の両モードに対応する。
 package caoCsv
 
 import (

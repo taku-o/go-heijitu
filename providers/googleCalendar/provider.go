@@ -1,3 +1,6 @@
+// Package googleCalendar は Google Calendar の日本祝日カレンダーを祝日データ
+// ソースとする heijitu.HolidayProvider 実装を提供する。APIキー認証と OAuth2
+// サービスアカウント認証に対応する。
 package googleCalendar
 
 import (
