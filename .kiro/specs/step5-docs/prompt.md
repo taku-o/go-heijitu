@@ -121,6 +121,15 @@ jj new
 /kiro-review-feature step5-docs 3
 jj new
 
+タスク3.1はチェックついてないけど、終わってる？
+jj new
+
+-------------
+
+/kiro-impl step5-docs 4
+/kiro-review-feature step5-docs 4
+jj new
+
 
 
 
