@@ -56,6 +56,7 @@ node_modules/
 .cursor/rules/cursor-local.mdc
 .cursor/commands/sdd-fix-plan.md
 .serenaignore
+.claude/rules/development-style.md
 .claude/settings.json
 .claude/hooks/stop_words_rules.json
 .claude/hooks/block-multiedit.sh
@@ -66,6 +67,7 @@ node_modules/
 .claude/commands/continue-task.md
 .claude/commands/kiro-approve-design.md
 .claude/commands/kiro-approve-req.md
+.claude/commands/kiro-approve-tasks.md
 .claude/commands/kiro-approve-task.md
 .claude/commands/kiro-check-survey-gap.md
 .claude/commands/kiro-complete-tasks.md
