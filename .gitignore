@@ -76,5 +76,6 @@ node_modules/
 .claude/commands/kiro-review-feature.md
 .claude/commands/serena-initialize.md
 .claude/commands/simplify-loop.md
+.claude/skills/prevent-cc-sdd-auto-progress/
 CLAUDE.local.md
 
